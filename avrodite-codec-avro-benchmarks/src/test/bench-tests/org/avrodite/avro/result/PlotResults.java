@@ -6,17 +6,13 @@ import static java.util.Collections.singletonList;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.machinezoo.noexception.Exceptions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -43,13 +39,14 @@ import tech.tablesaw.plotly.components.Margin;
 import tech.tablesaw.plotly.components.Page;
 import tech.tablesaw.plotly.traces.BarTrace;
 
-@Builder @Slf4j
+@Builder
+@Slf4j
 public class PlotResults {
 
   private List<String> inputFiles;
   private String driverPath;
 
-  public void plot(){
+  public void plot() {
     File tempoDir = Files.newTemporaryFolder();
     FirefoxDriver firefoxDriver = getDriver(tempoDir, driverPath);
     inputFiles
@@ -59,7 +56,7 @@ public class PlotResults {
 
   @SneakyThrows
   public static InputStream getPngPlot(FirefoxDriver firefoxDriver, File tempoDir, String page) {
-    firefoxDriver.get("file://"+page);
+    firefoxDriver.get("file://" + page);
     log.info("{}", new File(tempoDir, "newplot.png").delete());
     WebElement webElement = firefoxDriver.findElementByCssSelector(".modebar > div:nth-child(1) > a");
     webElement.click();
@@ -78,13 +75,13 @@ public class PlotResults {
       .plot();
   }
 
-  private static FirefoxDriver getDriver(File tempoDir, String driverPath){
+  private static FirefoxDriver getDriver(File tempoDir, String driverPath) {
     System.setProperty("webdriver.gecko.driver", driverPath);
     FirefoxProfile fxProfile = new FirefoxProfile();
-    fxProfile.setPreference("browser.download.folderList",2);
-    fxProfile.setPreference("browser.download.manager.showWhenStarting",false);
+    fxProfile.setPreference("browser.download.folderList", 2);
+    fxProfile.setPreference("browser.download.manager.showWhenStarting", false);
     fxProfile.setPreference("browser.download.dir", tempoDir.getAbsolutePath());
-    fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","application/zip,application/octet-stream,image/png,image/jpeg,application/vnd.ms-outlook,text/html,application/pdf");
+    fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/zip,application/octet-stream,image/png,image/jpeg,application/vnd.ms-outlook,text/html,application/pdf");
     FirefoxOptions firefoxOptions = new FirefoxOptions();
     firefoxOptions.addArguments("--headless");
     firefoxOptions.setProfile(fxProfile);
@@ -116,9 +113,9 @@ public class PlotResults {
             metricColumn.append(metric.extractor.apply(model));
           });
         Table table = Table.create(subject, metricColumn);
-        if(metric.name.equalsIgnoreCase("throughput")){
+        if (metric.name.equalsIgnoreCase("throughput")) {
           table = table.sortOn(metric.name);
-        }else {
+        } else {
           table = table.sortDescendingOn(metric.name);
         }
         StringBuilder sb = new StringBuilder();
@@ -130,17 +127,17 @@ public class PlotResults {
         String title = sb.toString();
         return new Pair<>(metric, create(title, table, "subject", metric.name));
       }).forEach(plot -> sneak().run(() -> {
-        String filePath = format("/tmp/%s.html", file.getName());
-        Page page = Page.pageBuilder(plot.value, "target").build();
-        String output = page.asJavascript();
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(filePath)), StandardCharsets.UTF_8)) {
-          writer.write(output);
-        }
-        InputStream is = getPngPlot(firefoxDriver, tempoDir, filePath);
-        FileOutputStream pngFile = new FileOutputStream(new File(format("/media/yassine/work/oss/avrodite/avrodite-pages/images/%s-%s.png", file.getName(), plot.key.name).toLowerCase()));
-        IOUtils.copy(is, pngFile);
-        new File(filePath).delete();
-      }));
+      String filePath = format("/tmp/%s.html", file.getName());
+      Page page = Page.pageBuilder(plot.value, "target").build();
+      String output = page.asJavascript();
+      try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(filePath)), StandardCharsets.UTF_8)) {
+        writer.write(output);
+      }
+      InputStream is = getPngPlot(firefoxDriver, tempoDir, filePath);
+      FileOutputStream pngFile = new FileOutputStream(new File(format("/media/yassine/work/oss/avrodite/avrodite-pages/images/%s-%s.png", file.getName(), plot.key.name).toLowerCase()));
+      IOUtils.copy(is, pngFile);
+      new File(filePath).delete();
+    }));
   }
 
   protected static Figure create(String title, Table table, String groupColName, String numberColName) {
@@ -162,7 +159,9 @@ public class PlotResults {
     V value;
   }
 
-  @Getter @Setter @Accessors(chain = true, fluent = true)
+  @Getter
+  @Setter
+  @Accessors(chain = true, fluent = true)
   static class MetricModel {
     private String name;
     private Function<ResultModel, Double> extractor;
