@@ -67,3 +67,7 @@ The following features
 - Support enums (easy).
 - Support for union types (can be useful when you have a supertype with various children) (easy).
 - Map API evolution to Schema migration (most likely hard).
+
+#### Licence
+Copyright (c) 2018 Yassine Echabbi
+Licensed under the Apache License, Version 2.0 (the "License")
