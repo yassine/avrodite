@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.util.Files;
 import org.openqa.selenium.WebElement;
@@ -42,7 +43,7 @@ import tech.tablesaw.plotly.components.Margin;
 import tech.tablesaw.plotly.components.Page;
 import tech.tablesaw.plotly.traces.BarTrace;
 
-@Builder
+@Builder @Slf4j
 public class PlotResults {
 
   private List<String> inputFiles;
@@ -59,9 +60,10 @@ public class PlotResults {
   @SneakyThrows
   public static InputStream getPngPlot(FirefoxDriver firefoxDriver, File tempoDir, String page) {
     firefoxDriver.get("file://"+page);
+    log.info("{}", new File(tempoDir, "newplot.png").delete());
     WebElement webElement = firefoxDriver.findElementByCssSelector(".modebar > div:nth-child(1) > a");
     webElement.click();
-    WebDriverWait wait = new WebDriverWait(firefoxDriver, 1);
+    WebDriverWait wait = new WebDriverWait(firefoxDriver, 3);
     wait.until((driver) -> sneak().get(() -> new File(tempoDir, "newplot.png").exists()));
     return new FileInputStream(new File(tempoDir, "newplot.png"));
   }
@@ -128,7 +130,7 @@ public class PlotResults {
         String title = sb.toString();
         return new Pair<>(metric, create(title, table, "subject", metric.name));
       }).forEach(plot -> sneak().run(() -> {
-        String filePath = format("/tmp/%s.html", plot.key.name);
+        String filePath = format("/tmp/%s.html", file.getName());
         Page page = Page.pageBuilder(plot.value, "target").build();
         String output = page.asJavascript();
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(filePath)), StandardCharsets.UTF_8)) {
@@ -137,6 +139,7 @@ public class PlotResults {
         InputStream is = getPngPlot(firefoxDriver, tempoDir, filePath);
         FileOutputStream pngFile = new FileOutputStream(new File(format("/media/yassine/work/oss/avrodite/avrodite-pages/images/%s-%s.png", file.getName(), plot.key.name).toLowerCase()));
         IOUtils.copy(is, pngFile);
+        new File(filePath).delete();
       }));
   }
 

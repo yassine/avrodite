@@ -50,11 +50,11 @@ The tests are available under the 'avrodite-codec-avro-benchmarks'.
 | Jackson JSON               | 90.34         | 89.97         | 2.52%         | 2.96%         |
 
 ##### Throughput (Test 1, Higher is better)
-![Alt text](./images/bench-results.json-throughput.png?raw=true&v=3 "Throughput")
+![Alt text](./images/bench-results.json-throughput.png?raw=true&v=9 "Throughput")
 
 
 ##### Throughput (Test 2, Higher is better)
-![Alt text](./images/bench-results-nullable-fields.json-throughput.png?raw=true&v=3 "Throughput")
+![Alt text](./images/bench-results-nullable-fields.json-throughput.png?raw=true&v=5 "Throughput")
 
 
 ##### Test Fixture (in JSON)
