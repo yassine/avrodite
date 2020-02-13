@@ -50,7 +50,7 @@ Schema schema = codec.getSchema();
 
 Refer to this [document](./avrodite-pages/benchmarks.md) for detailed results. 
 
-| Framework                  | T1 Throughput | T2 Throughput | T2 Throughput | T2 rel. perf. |
+| Framework                  | T1 Throughput | T2 Throughput | T1 rel. perf. | T2 rel. perf. |
 |----------------------------|---------------|---------------|---------------|---------------|
 | Avrodite                   | 3577.84       | 3035.15       | 100.00%       | 100.00%       |
 | Protocol Buffers           | 573.60        | 588.06        | 16.03%        | 19.37%        |
