@@ -1,0 +1,7 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+{# @pebvariable name="depth" type="int"#}
+
+{% macro decode_long(context, field, depth, reference) %}
+{{ reference }} = buffer.readLong();
+{% endmacro %}

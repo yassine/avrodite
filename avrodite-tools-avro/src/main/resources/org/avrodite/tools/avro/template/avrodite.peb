@@ -1,0 +1,212 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="avroContext" type="org.avrodite.tools.avro.AvroBeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+package {{ context.bean.targetRaw.package.name }};
+
+{% import './macros/encoder/array.macro.peb' %}
+{% import './macros/encoder/double.macro.peb' %}
+{% import './macros/encoder/float.macro.peb' %}
+{% import './macros/encoder/int.macro.peb' %}
+{% import './macros/encoder/list.macro.peb' %}
+{% import './macros/encoder/map.macro.peb' %}
+{% import './macros/encoder/long.macro.peb' %}
+{% import './macros/encoder/string.macro.peb' %}
+{% import './macros/encoder/type.macro.peb' %}
+{% import './macros/encoder/_primitive.macro.peb' %}
+{% import './macros/encoder/_field.macro.peb' %}
+{% import './macros/decoder/array.macro.peb' %}
+{% import './macros/decoder/double.macro.peb' %}
+{% import './macros/decoder/float.macro.peb' %}
+{% import './macros/decoder/int.macro.peb' %}
+{% import './macros/decoder/list.macro.peb' %}
+{% import './macros/decoder/map.macro.peb' %}
+{% import './macros/decoder/long.macro.peb' %}
+{% import './macros/decoder/string.macro.peb' %}
+{% import './macros/decoder/type.macro.peb' %}
+{% import './macros/decoder/_primitive.macro.peb' %}
+{% import './macros/decoder/_field.macro.peb' %}
+{% import './macros/invisible_fields.macro.peb' %}
+{% import './macros/value_fields.macro.peb' %}
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
+import org.apache.avro.io.BinaryDecoder;
+import org.apache.avro.io.BinaryEncoder;
+import org.apache.avro.io.DecoderFactory;
+import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.Schema;
+
+import org.avrodite.api.annotation.Generated;
+import org.avrodite.api.error.CodecException;
+import org.avrodite.api.CodecManager;
+import org.avrodite.api.Configurable;
+
+import org.avrodite.avro.AvroCodec;
+import org.avrodite.avro.AvroCodecException;
+import org.avrodite.avro.AvroInputByteBuffer;
+import org.avrodite.avro.AvroOutputByteBuffer;
+import org.avrodite.avro.AvroStandard;
+
+import {{ context.bean.targetRaw.name }};
+
+@Generated
+@SuppressWarnings("unchecked")
+public class {{ context.codecName() }} implements AvroCodec<{{ context.bean.targetRaw.simpleName }}>, Configurable<AvroCodec<?>, AvroInputByteBuffer, AvroOutputByteBuffer, AvroStandard>
+{
+
+  {{ dump_invisible_bean_members(context) }}
+  {{ dump_value_types_bean_members(context) }}
+
+  private CodecManager codecManager;
+
+  public void configure(CodecManager codecManager){
+    this.codecManager = codecManager;
+  }
+
+  @Override
+  public byte[] encode({{ context.bean.targetRaw.simpleName }} bean) throws CodecException{
+    AvroOutputByteBuffer out = new AvroOutputByteBuffer(new byte[64]);
+    encode(bean, out);
+    return out.toByteArray();
+  }
+
+  @Override
+  public void decode({{ context.bean.targetRaw.simpleName }} bean, byte[] data) throws CodecException{
+    AvroInputByteBuffer in = new AvroInputByteBuffer(data);
+    decode(bean, in);
+  }
+
+  public AvroStandard standard(){
+    return {{ avroContext.standard }};
+  }
+
+  @Override
+  public void encode({{ context.bean.targetRaw.simpleName }} bean, AvroOutputByteBuffer buffer) throws CodecException {
+    {% for xfield in context.fields %}
+    {% set field = xfield%}
+    {% if not field.info.inherited or field.info.accessor.publiclyReadable %}
+        encode__{{ field.info.name }}(bean, buffer);
+    {% else %}
+        {{ field.declaringClassEncoderFqName() }}.encode__{{ field.info.name }}(bean, buffer);
+    {% endif %}
+    {% endfor %}
+  }
+
+
+  public static void encodeAll({{ context.bean.targetRaw.simpleName }} bean, AvroOutputByteBuffer buffer) throws CodecException {
+{% for xfield in context.fields %}
+{% set field = xfield%}
+{% if not field.info.inherited or field.info.accessor.publiclyReadable  %}
+    encode__{{ field.info.name }}(bean, buffer);
+{% else %}
+    {{ field.declaringClassEncoderFqName() }}.encode__{{ field.info.name }}(bean, buffer);
+{% endif %}
+{% endfor %}
+  }
+
+{% for xfield in context.fields %}
+{% set field = xfield%}
+{% if not field.info.inherited or field.info.accessor.publiclyReadable %}
+  public static void encode__{{ field.info.name }}({{ context.bean.targetRaw.simpleName }} bean, AvroOutputByteBuffer buffer) throws CodecException{
+        {% if field.info.accessor.visible %}
+            {{ field.info.typeSignature }} fieldValue = ({{ field.info.typeSignature }}) bean.{{ field.info.name }};
+        {% elseif field.info.accessor.readable %}
+            {{ field.info.typeSignature }} fieldValue = ({{ field.info.typeSignature }}) bean.{{ field.info.accessor.getter.name }}();
+        {% elseif field.info.accessor.hidden %}
+            try{
+                {{ field.info.typeSignature }} fieldValue = ({{ field.info.typeSignature }}) {{ field.info.name }}.get(bean);
+            }catch(Exception e){
+                throw AvroCodecException.API.error(e);
+            }
+        {% endif %}
+        {% if field.info.nullable %}
+        if(fieldValue != {{ field.nullValue() }}){
+          buffer.writeByte((byte) 0);
+        {% endif %}
+        {{  encode_field(context, field, 0, "fieldValue")  }}
+        {% if field.info.nullable %}
+        }else{
+          buffer.writeByte((byte) 2);
+        }
+        {% endif %}
+  }
+{% endif %}
+{% endfor %}
+
+
+  @Override
+  public void decode({{ context.bean.targetRaw.simpleName }} bean, AvroInputByteBuffer buffer) throws CodecException {
+    {% for xfield in context.fields %}
+    {% set field = xfield%}
+    {% if not field.info.inherited %}
+        decode__{{ field.info.name }}(bean, buffer);
+    {% else %}
+        {{ field.declaringClassEncoderFqName() }}.decode__{{ field.info.name }}(bean, buffer);
+    {% endif %}
+    {% endfor %}
+  }
+
+
+  public static void decodeAll({{ context.bean.targetRaw.simpleName }} bean, AvroInputByteBuffer buffer) throws CodecException {
+{% for xfield in context.fields %}
+{% set field = xfield%}
+{% if not field.info.inherited %}
+    decode__{{ field.info.name }}(bean, buffer);
+{% else %}
+    {{ field.declaringClassEncoderFqName() }}.decode__{{ field.info.name }}(bean, buffer);
+{% endif %}
+{% endfor %}
+  }
+
+{% for xfield in context.fields %}
+{% set field = xfield%}
+{% if not field.info.inherited %}
+  public static void decode__{{ field.info.name }}({{ context.bean.targetRaw.simpleName }} bean, AvroInputByteBuffer buffer) throws CodecException {
+    {% if field.info.nullable %}
+        int fIndex = buffer.readInt();
+        if(fIndex == 0){
+    {% endif %}
+          {{ field.info.typeSignature }} fieldValue = {{ field.nullValue() }};
+          {{ decode_field(context, field, 0, "fieldValue") }}
+          {% if field.info.accessor.visible %}
+                bean.{{ field.info.name }} = fieldValue;
+          {% elseif field.info.accessor.writable %}
+                bean.{{ field.info.accessor.setter.name }}(fieldValue);
+          {% elseif field.info.accessor.hidden %}
+                try {
+                    {{ field.info.name }}.set(bean, fieldValue);
+                } catch(Exception e) {
+                    throw AvroCodecException.API.error(e);
+                }
+          {% endif %}
+    {% if field.info.nullable %}
+        } else if(fIndex != 1) {
+          throw AvroCodecException.API.unexpectedUnionIndexValue(fIndex, "{{ field.info.name }}", "{{ context.bean.targetRaw.name }}");
+        }
+    {% endif %}
+  }
+{% endif %}
+{% endfor %}
+
+  private static final Schema SCHEMA;
+
+  static {
+    try{
+        SCHEMA = new Schema.Parser().parse(new ByteArrayInputStream(new byte[]{
+            {{ avroContext.schemaString() }}
+        }));
+    } catch(Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public Schema getSchema(){
+    return SCHEMA;
+  }
+
+}

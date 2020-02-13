@@ -1,0 +1,3 @@
+{% macro encode_long(templateContext, field, depth, reference) %}
+buffer.writeLong({{ reference }});
+{% endmacro %}

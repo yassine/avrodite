@@ -1,0 +1,24 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+
+{% macro dump_invisible_bean_members(context) %}
+{% for xfield in context.fields %}
+{% set field = xfield%}
+  {% if field.info.accessor.hidden %}
+  private static final Field {{ field.info.name }} = Arrays.stream({{ context.bean.targetRaw.simpleName }}.class.getDeclaredFields())
+                                                        .filter(f -> f.getName().equals("{{ field.info.field.name }}"))
+                                                        .findAny().get();
+  {% endif %}
+{% endfor %}
+
+{% if context.hasHiddenFields() %}
+  static {
+{% for xfield in context.fields %}
+{% set field = xfield%}
+  {% if field.info.accessor.hidden %}
+  {{ field.info.name }}.setAccessible(true);
+  {% endif %}
+{% endfor %}
+  }
+{% endif %}
+{% endmacro %}

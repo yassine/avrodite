@@ -1,0 +1,27 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+{# @pebvariable name="depth" type="int"#}
+{# @pebvariable name="pipeItem" type="org.avrodite.tools.template.TypeFingerprint"#}
+{# @pebvariable name="reference" type="java.lang.String"#}
+
+{% macro decode_primitive(context, field, depth, reference) %}
+{% set pipeItem = field.fingerprints[depth] %}
+{% if pipeItem == 'STRING' %}
+{{ decode_string(context, field, depth, reference) }}
+{% endif %}
+{% if pipeItem == 'INT' %}
+{{ decode_int(context, field, depth, reference) }}
+{% endif %}
+{% if pipeItem == 'LONG' %}
+{{ decode_long(context, field, depth, reference) }}
+{% endif %}
+{% if pipeItem == 'FLOAT' %}
+{{ decode_float(context, field, depth, reference) }}
+{% endif %}
+{% if pipeItem == 'DOUBLE' %}
+{{ decode_double(context, field, depth, reference) }}
+{% endif %}
+{% if pipeItem == 'BOOLEAN' %}
+{{ decode_boolean(context, field, depth, reference) }}
+{% endif %}
+{% endmacro %}

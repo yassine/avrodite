@@ -1,0 +1,3 @@
+{% macro encode_float(templateContext, field, depth, reference) %}
+buffer.writeFloat({{ reference }});
+{% endmacro %}

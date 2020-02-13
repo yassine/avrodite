@@ -1,0 +1,19 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+{% macro encode_map(context, field, depth, reference) %}
+    {% set item_ref = "i_"+depth+"_"+context.random() %}
+    {% set index_ref = "c_"+depth+"_"+context.random() %}
+    buffer.writeLong({{ reference }}.size());
+    {{ field.signatures[depth] }} {{ item_ref }};
+    for(java.util.Map.Entry<String, {{ field.signatures[depth] }}> entry : {{ reference }}.entrySet()){
+      buffer.writeString(entry.getKey());
+      {{ item_ref }} = entry.getValue();
+      if({{ item_ref }} == null){
+        buffer.writeByte((byte) 2);
+      }else{
+        buffer.writeByte((byte) 0);
+        {{ encode_field(templateContext, field, depth + 1, item_ref) }};
+      }
+    }
+    buffer.writeArrayEnd();
+{% endmacro %}

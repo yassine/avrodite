@@ -1,0 +1,9 @@
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+{# @pebvariable name="reference" type="String"#}
+{% macro encode_type(context, field, depth, reference) %}
+{% if field.valueType %}
+  value_decoder_{{ field.info.name }}.encode({{ reference }}, buffer);
+{% else %}
+  {{ field.targetEncoderClassFqName() }}.encodeAll(({{ field.info.targetTypeInfo.signature() }}) {{ reference }}, buffer);
+{% endif %}
+{% endmacro %}

@@ -1,0 +1,12 @@
+{# @pebvariable name="context" type="org.avrodite.tools.template.BeanTemplateContext"#}
+{# @pebvariable name="field" type="org.avrodite.tools.template.FieldTemplateContext"#}
+
+{% macro dump_value_types_bean_members(context) %}
+{% for xfield in context.fields %}
+{% set field = xfield%}
+  {% if field.valueType %}
+  private static final {{ field.valueCodecName() }} value_decoder_{{ field.info.name }} = new {{ field.valueCodecName() }}();
+  {% endif %}
+{% endfor %}
+
+{% endmacro %}
