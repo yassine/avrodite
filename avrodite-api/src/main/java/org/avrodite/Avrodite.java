@@ -6,6 +6,7 @@ import static java.lang.reflect.Modifier.isInterface;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.vyarus.java.generics.resolver.GenericsResolver.resolve;
 
@@ -109,22 +110,16 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
     @SuppressWarnings("unchecked")
     private void register(Class<?> clazz, HashMap<Class<?>, C> codecIndex, Avrodite<S, C> avrodite) {
-      C codec = getBeanCodecInstance(clazz);
-      if (codec != null) {
-        S codecStandard = codec.standard();
-        if (standard.name().equals(codecStandard.name()) && standard.version().equals(codecStandard.version())) {
-          getCodecTarget(clazz);
-          codecIndex.put(getCodecTarget(clazz), codec);
-          if (Configurable.class.isAssignableFrom(clazz)) {
-            ((Configurable<C, ?, ?, S>) codec).configure(avrodite);
-          }
-        }
-      }
+      ofNullable(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
+        .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
+        .map(codec -> codecIndex.put(getCodecTarget(clazz), codec))
+        .filter(codec -> Configurable.class.isAssignableFrom(clazz))
+        .ifPresent(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
     }
 
     @SuppressWarnings( {"unchecked", "rawtypes"})
     private Class<?> getCodecTarget(Class<?> clazz) {
-      return Optional.ofNullable(resolve(clazz).type(Codec.class).generics())
+      return ofNullable(resolve(clazz).type(Codec.class).generics())
         .filter(generics -> !generics.isEmpty())
         .map(generics -> generics.get(0))
         .orElse((Class) Object.class);
