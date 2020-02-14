@@ -5,21 +5,21 @@ A fast, lightweight, java driven, Apache Avro serialization/deserialization libr
 
 While designing this library, the following concerns were in mind:
 
-1. To be plain JAVA objects driven: This is particularly useful for an already existing application that 
+1. **POJO Driven**: This is particularly useful for an already existing application that 
 have a set of plain JAVA objects as API. We tried the avro core implementation, but the library adds 
 and additional layer of indirection/de-referencing. Moreover, the mapping between the Record 
 objects/dictionaries and the existing api can quickly turn into a fastidious boilerplate to maintain.
 
-2. Support for JAVA core Generics and complex types: Existing JAVA API models often leverage the 
+2. **Generics and complex types**: Existing JAVA API models often leverage the 
 typing features that the core language offers. We need a library that would support any type, 
 including types with generics.
 
-3. To be the fastest possible: Latency is a critical requirement for modern applications and real-time 
+3. **Fast**: Latency is a critical requirement for modern applications and real-time 
 event processors. Having a library that performs at high standards, is definitely a criteria for 
-its use.
+its adoption.
 
-4. Low memory footprint: Holding pressure from the heap by minimizing the created objects during the 
-serialization / deserialization process can contribute to an overall application SLA. We need to have 
+4. **Low memory footprint**: Holding pressure from the heap by minimizing the created objects during the 
+serialization / deserialization process support applications towards meeting their SLA. We need to have 
 lowest possible memory footprint and offer an API for re-using existing objects when applicable.
 
 #### Current Status
@@ -29,8 +29,7 @@ adopted libraries. It has full support for Java generics and complex types (We'v
 fields of this kind `List<Map<String, Event<Map<String, String>, Model<A,B>>>>` and it passes). 
 From a performance perspective, it performs 3x-4x better than its closest mate, between 5x and 15x than 
 Avro core Record API.
-The project provide a MAVEN plugin that will generate the necessary classes at compile time. At runtime, 
-the interaction with Avrodite API would consist of something like so
+Regarding usability, the interaction with Avrodite API would consist of something like so
 ```java
 //API configuration would happen in your dependency injection layer 
 Avrodite<AvroStandard, AvroCodec<?>> avrodite = AvroStandardV19.avrodite()
@@ -43,7 +42,7 @@ AvroCodec<Model> codec = avrodite.getCodec(Model.class);
 byte[] avroData = codec.encode(new Model());
 Model decodedModel = codec.decode(avroData);
 
-//You can get your schema from the codec like so
+//When needed, you can get your schema from the codec instance like so
 Schema schema = codec.getSchema();
 
 ```
@@ -68,7 +67,7 @@ other libraries.
 
 #### Benchmark Results Snapshot
 
-Refer to this [document](./avrodite-pages/benchmarks.md) for detailed results. 
+Refer to this [document](./avrodite-pages/README.md) for detailed results. 
 
 | Framework                  | T1      | T1 relative Performance | T2      | T2 relative Performance |
 |----------------------------|---------|-------------------------|---------|-------------------------|
