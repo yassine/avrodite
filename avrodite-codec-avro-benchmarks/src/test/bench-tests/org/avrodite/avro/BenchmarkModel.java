@@ -36,7 +36,7 @@ public class BenchmarkModel {
   final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
   final ByteArrayInputStream byteArrayInputStream;
   final AvroOutputByteBuffer bufferOut = new AvroOutputByteBuffer(new byte[1024]);
-  final AvroInputByteBuffer bufferIn = new AvroInputByteBuffer(new byte[1024]);
+  final AvroInputByteBuffer bufferIn;
   final Avrodite<AvroStandard, AvroCodec<?>> avroCodecManager;
   final Schema eventSchema;
   final Schema metaSchema;
@@ -189,6 +189,7 @@ public class BenchmarkModel {
   public BenchmarkModel(boolean nullableFields) {
     testTarget = nullableFields ? serializedModels : nonNullableSerializedModel;
     this.byteArrayInputStream = new ByteArrayInputStream(testTarget);
+    bufferIn = new AvroInputByteBuffer(testTarget);
     this.nullableFields = nullableFields;
     avroCodecManager = Avrodite.builder(AVRO_1_8)
       .include(AvroditeTools.compiler(AVRO_1_8).discover(EquityMarketPriceEvent.class.getPackage().getName())

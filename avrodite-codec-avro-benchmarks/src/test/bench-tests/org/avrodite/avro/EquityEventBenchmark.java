@@ -3,6 +3,7 @@ package org.avrodite.avro;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import org.avrodite.fixtures.event.EquityMarketPriceEvent;
 import org.avrodite.fixtures.event.EquityOrder;
 import org.avrodite.fixtures.event.EventMeta;
 import org.avrodite.proto.EquityEvents;
+import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -44,7 +46,7 @@ public class EquityEventBenchmark {
   final String output;
 
   public EquityEventBenchmark() {
-    this.nullable = false;
+    this.nullable = true;
     this.model    = new BenchmarkModel(this.nullable);
     this.output   = this.nullable ? "/tmp/bench-results-nullable-fields.json": "/tmp/bench-results.json";
   }

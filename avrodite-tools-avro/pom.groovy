@@ -24,6 +24,4 @@ project(artifactId: 'avrodite-tools-avro', version: '0.1.0-SNAPSHOT') {
     dependency('org.spockframework:spock-core')
   }
 
-
-
 }

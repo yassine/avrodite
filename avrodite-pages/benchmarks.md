@@ -40,14 +40,14 @@ The tests are available under the 'avrodite-codec-avro-benchmarks'.
 
 #### Results Summary
 
-| Framework                  | T1 Throughput | T2 Throughput | T2 Throughput | T2 rel. perf. |
-|----------------------------|---------------|---------------|---------------|---------------|
-| Avrodite                   | 3577.84       | 3035.15       | 100.00%       | 100.00%       |
-| Protocol Buffers           | 573.60        | 588.06        | 16.03%        | 19.37%        |
-| Avro Core (No hydration)   | 505.96        | 120.07        | 14.14%        | 3.96%         |
-| Avro Core (With hydration) | 357.09        | 109.59        | 9.98%         | 3.61%         |
-| Jackson Avro               | 158.75        | 89.23         | 4.44%         | 2.94%         |
-| Jackson JSON               | 90.34         | 89.97         | 2.52%         | 2.96%         |
+| Framework                  | T1      | T1 relative Performance | T2      | T2 relative Performance |
+|----------------------------|---------|-------------------------|---------|-------------------------|
+| Avrodite                   | 2190.74 | 100.00%                 | 1806.33 | 100.00%                 |
+| Protocol Buffers           | 578.50  | 26.41%                  | 570.08  | 31.56%                  |
+| Avro Core (No hydration)   | 495.64  | 22.62%                  | 122.06  | 6.76%                   |
+| Avro Core (With hydration) | 348.06  | 15.89%                  | 107.48  | 5.95%                   |
+| Jackson Avro               | 158.93  | 7.25%                   | 91.50   | 5.07%                   |
+| Jackson JSON               | 89.37   | 4.08%                   | 88.62   | 4.91%                   |
 
 ##### Throughput (Test 1, Higher is better)
 ![Alt text](./images/bench-results.json-throughput.png?raw=true&v=9 "Throughput")
