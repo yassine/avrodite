@@ -19,7 +19,7 @@ event processors. Having a library that performs at high standards, is definitel
 its use.
 
 4. Low memory footprint: Holding pressure from the heap by minimizing the created objects during the 
-serialization / deserialization process can contribute to the overall application SLA. We need to have 
+serialization / deserialization process can contribute to an overall application SLA. We need to have 
 lowest possible memory footprint and offer an API for re-using existing objects when applicable.
 
 #### Current Status
