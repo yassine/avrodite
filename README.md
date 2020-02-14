@@ -43,18 +43,19 @@ AvroCodec<Model> codec = avrodite.getCodec(Model.class);
 byte[] avroData = codec.encode(new Model());
 Model decodedModel = codec.decode(avroData);
 
-//You can get you schema from the codec like so
+//You can get your schema from the codec like so
 Schema schema = codec.getSchema();
 
 ```
 
 #### Modules description
 The library is modular and was designed with the idea of implementing other serialization
-formats (JSON for example). Currently the modules are :
+formats in the future (JSON for example). Currently the modules consists of :
 
 1. `avrodite-api`: This is the general API that projects would depends on for 
 serialization/deserialization
-2. `avrodite-codec-avro`: This is an implementation of the public API that provides AVRO support.
+2. `avrodite-codec-avro`: This is an implementation of the public API that provides AVRO 
+custom API (access to Schema instances for example).
 3. `avrodite-tools`: This would be mainly a compile-time/build phase dependency that contains the 
 necessary logic for introspecting your beans and plain objects API. 
 4. `avrodite-tools-avro`: An `avrodite-tools` plugin that generate custom classes for the AVRO binary 
@@ -84,10 +85,10 @@ Refer to this [document](./avrodite-pages/benchmarks.md) for detailed results.
 #### Roadmap
 The following features are planned for the future:
 - Enums support (easy).
-- Avro Union types (can be useful when you have a supertype with various children) (easy).
-- Map API evolution to Schema migration (most likely hard).
+- Avro Union types (can be useful when you have a supertype with various children) (easy/medium).
+- Map a model API evolution to Schema migration (most likely hard).
 - Support other serialization formats: A good portion of the library (types introspection, codec compilation) can be 
-re-used to support other formats such as JSON. (average difficulty)
+re-used to support other formats such as JSON. (average difficulty, depends on format)
 
 #### Licence
 Copyright (c) 2020 Yassine Echabbi
