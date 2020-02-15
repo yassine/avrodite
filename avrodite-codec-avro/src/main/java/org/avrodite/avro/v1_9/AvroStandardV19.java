@@ -1,4 +1,4 @@
-package org.avrodite.avro.value.v1_9;
+package org.avrodite.avro.v1_9;
 
 import org.avrodite.avro.AvroStandard;
 

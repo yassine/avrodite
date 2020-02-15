@@ -3,8 +3,8 @@ package org.avrodite.avro.value
 import org.apache.avro.io.BinaryData
 import org.avrodite.avro.AvroInputByteBuffer
 import org.avrodite.avro.AvroOutputByteBuffer
-import org.avrodite.avro.value.v1_8.InstantCodecV18
-import org.avrodite.avro.value.v1_9.InstantCodecV19
+import org.avrodite.avro.v1_8.InstantCodecV18
+import org.avrodite.avro.v1_9.InstantCodecV19
 import spock.lang.Specification
 
 import java.time.Instant

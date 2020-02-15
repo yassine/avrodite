@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import org.avrodite.Avrodite;
 import org.avrodite.api.CodecStandard;
 import org.avrodite.api.CodecStandardApi;
-import org.avrodite.avro.value.v1_9.AvroStandardV19;
+import org.avrodite.avro.v1_9.AvroStandardV19;
 
 @Accessors(fluent = true)
 @EqualsAndHashCode
