@@ -64,7 +64,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 |-----------|{% for xtest in context.tests %}{% set test = xtest %}------------|--------------|{% endfor %}
 
-{% set frameworks = test.throughputMetric.frameworks() %}
+{% set frameworks = test.heapAllocationRate.frameworks() %}
 {% for framework in frameworks %}
 | {{ framework }} | {% for xtest in context.tests %}{% set test = xtest %}{{ test.heapAllocationRate.metricOfFramework(framework)  }} | {{ test.heapAllocationRate.relativePerformanceMap[framework]  }} | {% endfor %}
 
