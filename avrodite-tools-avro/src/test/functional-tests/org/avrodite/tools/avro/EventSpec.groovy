@@ -9,7 +9,7 @@ import org.avrodite.Avrodite
 import org.avrodite.avro.AvroCodec
 import org.avrodite.avro.AvroOutputByteBuffer
 import org.avrodite.avro.AvroStandard
-import org.avrodite.avro.value.v1_9.AvroStandardV19
+import org.avrodite.avro.v1_9.AvroStandardV19
 import org.avrodite.fixtures.event.Equity
 import org.avrodite.fixtures.event.EquityMarketPriceEvent
 import org.avrodite.fixtures.event.EventMeta

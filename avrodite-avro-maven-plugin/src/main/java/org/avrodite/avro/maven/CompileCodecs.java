@@ -23,7 +23,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.avrodite.avro.value.v1_8.AvroStandardV18;
+import org.avrodite.avro.v1_8.AvroStandardV18;
 import org.avrodite.tools.AvroditeTools;
 import org.avrodite.tools.compiler.Compilation;
 

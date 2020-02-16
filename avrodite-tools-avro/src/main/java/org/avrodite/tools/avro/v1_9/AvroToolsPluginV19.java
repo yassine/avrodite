@@ -2,7 +2,7 @@ package org.avrodite.tools.avro.v1_9;
 
 import com.google.auto.service.AutoService;
 import org.avrodite.avro.AvroStandard;
-import org.avrodite.avro.value.v1_9.AvroStandardV19;
+import org.avrodite.avro.v1_9.AvroStandardV19;
 import org.avrodite.tools.api.AvroditeToolsPlugin;
 import org.avrodite.tools.avro.AvroBeanTemplateContext;
 import org.avrodite.tools.avro.AvroToolsPlugin;
