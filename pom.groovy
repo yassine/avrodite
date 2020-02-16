@@ -41,9 +41,6 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('org.avrodite:avrodite-tools-avro:0.1.0-SNAPSHOT')
       dependency('org.avrodite:avrodite-codec-avro:0.1.0-SNAPSHOT')
 
-      dependency('org.apache.avro:avro:1.8.1') { exclusions('org.slf4j:slf4j-api') }
-      dependency('org.jgrapht:jgrapht-core:1.3.1')
-
       dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
       /* java core language utilities */
       dependency('com.machinezoo.noexception:noexception:${version.utilities.no-exception}') { exclusions('org.slf4j:slf4j-api') }
@@ -52,8 +49,8 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('ru.vyarus:generics-resolver:${version.utilities.vyarus-generics}')
       /* logging */
       dependency('ch.qos.logback:logback-classic:${version.logging.logback}')
-      dependency('org.jboss.logging:jboss-logging-annotations:${version.logging.jboss.ann}')
-      dependency('org.jboss.logging:jboss-logging-processor:${version.logging.jboss.ann}')
+      dependency('org.jboss.logging:jboss-logging-annotations:${version.logging.jboss.ann}:provided')
+      dependency('org.jboss.logging:jboss-logging-processor:${version.logging.jboss.ann}:provided')
       dependency('org.jboss.logging:jboss-logging:${version.logging.jboss}')
       /* testing */
       dependency('org.junit.jupiter:junit-jupiter:${version.testing.junit}:test')
@@ -65,7 +62,6 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('org.spockframework:spock-core:1.3-groovy-2.5:test')
       /* bench-testing */
       dependency('com.fasterxml.jackson.dataformat:jackson-dataformat-avro:2.9.9:test')
-      dependency('com.jsoniter:jsoniter:0.9.23:test')
       dependency('org.javassist:javassist:3.26.0-GA:test')
     }
   }

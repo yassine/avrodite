@@ -1,5 +1,5 @@
-## Avrodite   ![image alt >](./avrodite-pages/images/avrodite.png?raw=true#right) 
-A fast, lightweight, java driven, Apache Avro serialization/deserialization library.
+## Avrodite ![image alt >](./avrodite-pages/images/avrodite.png?raw=true) 
+A fast, lightweight, POJO driven, Apache Avro serialization/deserialization library.
 
 #### Motivation
 
@@ -67,19 +67,38 @@ other libraries.
 
 #### Benchmark Results Snapshot
 
-Refer to this [document](./avrodite-pages/README.md) for detailed results. 
+Refer to this [document](./avrodite-pages/Benchmarks.md) for detailed results. 
 
-| Framework                  | T1      | T1 relative Performance | T2      | T2 relative Performance |
-|----------------------------|---------|-------------------------|---------|-------------------------|
-| Avrodite                   | 2190.74 | 100.00%                 | 1806.33 | 100.00%                 |
-| Protocol Buffers           | 578.50  | 26.41%                  | 570.08  | 31.56%                  |
-| Avro Core (No hydration)   | 495.64  | 22.62%                  | 122.06  | 6.76%                   |
-| Avro Core (With hydration) | 348.06  | 15.89%                  | 107.48  | 5.95%                   |
-| Jackson Avro               | 158.93  | 7.25%                   | 91.50   | 5.07%                   |
-| Jackson JSON               | 89.37   | 4.08%                   | 88.62   | 4.91%                   |
-      
-![Alt text](./avrodite-pages/images/bench-results.json-throughput.png?raw=true "Throughput")
 
+##### Throughput
+
+(Higher is better)
+
+| Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
+|-----------|------------|--------------|------------|--------------|
+| avrodite | 1836 | 100.00% | 2260 | 100.00% | 
+| protocolBuffers | 582 | 31.68% | 580 | 25.66% | 
+| avroCoreNoHydration | 108 | 5.87% | 504 | 22.30% | 
+| avroCoreWithHydration | 103 | 5.63% | 349 | 15.45% | 
+| jacksonAvro | 86 | 4.69% | 151 | 6.67% | 
+| jacksonJSON | 87 | 4.75% | 87 | 3.87% | 
+
+![Alt text](./avrodite-pages/images/T1.thrpt.png?raw=true "Throughput")
+
+##### Heap Usage
+
+(Lower is better)
+
+| Framework | T1 Heap Allocation Rate [ Byte/op ] | T1 relative perf. |T2 Heap Allocation Rate [ Byte/op ] | T2 relative perf. |
+|-----------|------------|--------------|------------|--------------|
+| avrodite | 1024 | 100.00% | 1024 | 100.00% | 
+| protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
+| avroCoreNoHydration | 2248 | 219.53% | 2248 | 219.53% | 
+| avroCoreWithHydration | 3128 | 305.47% | 3128 | 305.47% | 
+| jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
+| jacksonJSON | 10320 | 1007.81% | 10320 | 1007.81% | 
+
+![Alt text](./avrodite-pages/images/T1.gc.png?raw=true "Heap Usage")
 
 #### Roadmap
 The following features are planned for the future:

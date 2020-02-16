@@ -1,3 +1,5 @@
+{# @pebvariable name="context" type="org.avrodite.avro.result.TemplateContext"#}
+{# @pebvariable name="test" type="org.avrodite.avro.result.TestRepresentation"#}
 ## Benchmark Results
 
 #### Test description
@@ -9,13 +11,16 @@ like so (in pseudo-code):
 benchmark() {
   serialize(deserialize(fixture))
 }
-``` 
+```
 
-We run two tests:
-1. Test 1 (T1): Here we declared all the fields of the test fixture as non nullable (See model and schema below).
-2. Test 2 (T2): Here we declared all the fields of the test fixture as nullable (See model and schema below).
+We run {{ context.tests.size() }} tests:
+{% for xtest in context.tests %}
+{% set test = xtest %}
+{{ loop.index + 1 }}. Test {{ loop.index + 1 }} ({{ test.id }}): {{ test.description }}
 
-The tests are available under the 'avrodite-codec-avro-benchmarks'.
+{% endfor %}
+
+The tests classes are available under the 'avrodite-codec-avro-benchmarks' module.
 
 #### Test Environment
 
@@ -23,10 +28,11 @@ The tests are available under the 'avrodite-codec-avro-benchmarks'.
 |-----------|------------------------------------------|
 | Processor | Intel(R) Core(TM) i7-6900K CPU @ 3.20GHz |
 | Linux     | 5.3.0-29-generic                         |
-| JDK       | OpenJDK 64-Bit Server VM                 |
-| JVM Args  | -Xms1G -server                           |
+| JDK       | {{ context.model.vmName }} {{ context.model.vmVersion }}       |
+| JVM Args  | {{ context.model.jvmArgsList() }}   |
 
-#### Tested Frameworks
+
+##### Tested Frameworks
 
 | Framework              | Version    |
 |------------------------|------------|
@@ -36,25 +42,52 @@ The tests are available under the 'avrodite-codec-avro-benchmarks'.
 | Jackson JSON           | 2.8.5      |
 | Protocol Buffers       | 3.11.3     |
 
-
-
 #### Results Summary
 
-| Framework                  | T1      | T1 relative Performance | T2      | T2 relative Performance |
-|----------------------------|---------|-------------------------|---------|-------------------------|
-| Avrodite                   | 2190.74 | 100.00%                 | 1806.33 | 100.00%                 |
-| Protocol Buffers           | 578.50  | 26.41%                  | 570.08  | 31.56%                  |
-| Avro Core (No hydration)   | 495.64  | 22.62%                  | 122.06  | 6.76%                   |
-| Avro Core (With hydration) | 348.06  | 15.89%                  | 107.48  | 5.95%                   |
-| Jackson Avro               | 158.93  | 7.25%                   | 91.50   | 5.07%                   |
-| Jackson JSON               | 89.37   | 4.08%                   | 88.62   | 4.91%                   |
+##### Throughput
+{% set test = context.tests[0] %}
+| Framework | {% for xtest in context.tests %}{% set test = xtest %}{{ test.throughputMetric.title }} | {{ test.id  }} relative perf. |{% endfor %}
 
-##### Throughput (Test 1, Higher is better)
-![Alt text](./images/bench-results.json-throughput.png?raw=true&v=9 "Throughput")
+|-----------|{% for xtest in context.tests %}{% set test = xtest %}------------|--------------|{% endfor %}
+
+{% set frameworks = test.throughputMetric.frameworks() %}
+{% for framework in frameworks %}
+| {{ framework }} | {% for xtest in context.tests %}{% set test = xtest %}{{ test.throughputMetric.metricOfFramework(framework)  }} | {{ test.throughputMetric.relativePerformanceMap[framework]  }} | {% endfor %}
+
+{% endfor %}
 
 
-##### Throughput (Test 2, Higher is better)
-![Alt text](./images/bench-results-nullable-fields.json-throughput.png?raw=true&v=5 "Throughput")
+##### Heap Usage
+
+{% set test = context.tests[0] %}
+| Framework | {% for xtest in context.tests %}{% set test = xtest %}{{ test.heapAllocationRate.title }} | {{ test.id  }} relative perf. |{% endfor %}
+
+|-----------|{% for xtest in context.tests %}{% set test = xtest %}------------|--------------|{% endfor %}
+
+{% set frameworks = test.throughputMetric.frameworks() %}
+{% for framework in frameworks %}
+| {{ framework }} | {% for xtest in context.tests %}{% set test = xtest %}{{ test.heapAllocationRate.metricOfFramework(framework)  }} | {{ test.heapAllocationRate.relativePerformanceMap[framework]  }} | {% endfor %}
+
+{% endfor %}
+
+#### Results Charts
+{% for xtest in context.tests %}
+{% set test = xtest %}
+
+### {{ test.throughputMetric.title }}
+
+(Higher is better)
+
+![Alt text](./images/{{ test.throughputMetric.imageName() }}?raw=true "{{ test.throughputMetric.title }}")
+
+### {{ test.heapAllocationRate.title }}
+
+(Lower is better)
+
+![Alt text](./images/{{ test.heapAllocationRate.imageName() }}?raw=true "{{ test.heapAllocationRate.title }}")
+
+{% endfor %}
+
 
 
 ##### Test Fixture (in JSON)
