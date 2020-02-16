@@ -12,11 +12,11 @@ import static ru.vyarus.java.generics.resolver.GenericsResolver.resolve;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
   @Getter
   @Setter(PRIVATE)
-  private Map<Class<?>, ?> codecIndex;
+  private Map<Type, ?> codecIndex;
 
   @Getter
   private final S codecStandard;
@@ -47,10 +47,10 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     return (U) codecIndex.get(beanClass);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public <B, U extends Codec<B, ?, ?, S>> U getBeanCodecAs(Class<B> beanClass, Class<? super U> codecImplementation) {
-    return (U) codecIndex.get(beanClass);
+  @SuppressWarnings("unchecked")
+  public <B, U extends Codec<B, ?, ?, S>> U getBeanCodec(Type beanType) {
+    return (U) codecIndex.get(beanType);
   }
 
   public static <S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?, ?, S>> AvroditeBuilder<S, C> builder(S standard) {
@@ -77,7 +77,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     }
 
     public Avrodite<S, C> build() {
-      HashMap<Class<?>, C> codecIndex = new HashMap<>();
+      HashMap<Type, C> codecIndex = new HashMap<>();
       Avrodite<S, C> avrodite = new Avrodite<>(standard);
       if (!includedPackages.isEmpty()) {
         new ClassGraph().whitelistPathsNonRecursive(
@@ -109,7 +109,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     }
 
     @SuppressWarnings("unchecked")
-    private void register(Class<?> clazz, HashMap<Class<?>, C> codecIndex, Avrodite<S, C> avrodite) {
+    private void register(Class<?> clazz, HashMap<Type, C> codecIndex, Avrodite<S, C> avrodite) {
       ofNullable(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
         .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
         .map(codec -> codecIndex.put(getCodecTarget(clazz), codec))
@@ -118,11 +118,11 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     }
 
     @SuppressWarnings( {"unchecked", "rawtypes"})
-    private Class<?> getCodecTarget(Class<?> clazz) {
-      return ofNullable(resolve(clazz).type(Codec.class).generics())
+    private Type getCodecTarget(Class<?> clazz) {
+      return ofNullable(resolve(clazz).type(Codec.class).genericTypes())
         .filter(generics -> !generics.isEmpty())
         .map(generics -> generics.get(0))
-        .orElse((Class) Object.class);
+        .orElse(Object.class);
     }
 
     @SneakyThrows
