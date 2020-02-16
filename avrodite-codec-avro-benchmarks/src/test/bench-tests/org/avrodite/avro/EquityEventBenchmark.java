@@ -1,6 +1,7 @@
 package org.avrodite.avro;
 
 import static java.util.Objects.requireNonNull;
+import static org.avrodite.avro.ReportUtils.report;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,21 +53,21 @@ public class EquityEventBenchmark {
   @SneakyThrows
   public static void main(String[] args) {
     new EquityEventBenchmark().run();
+    report(OUTPUT_FILE, "avrodite-pages");
   }
 
   @SneakyThrows
-  public void run(){
+  public void run() {
     new Runner(
       new OptionsBuilder()
         .include(EquityEventBenchmark.class.getSimpleName())
         .resultFormat(ResultFormatType.JSON)
         .addProfiler(GCProfiler.class)
-        .result( OUTPUT_FILE )
+        .result(OUTPUT_FILE)
         .verbosity(VerboseMode.EXTRA)
         .forks(1)
         .build()
     ).run();
-    ReportUtils.report(OUTPUT_FILE, "avrodite-pages");
   }
 
   @State(Scope.Benchmark)
@@ -79,15 +80,15 @@ public class EquityEventBenchmark {
     private ProtocolBuffersBenchmarkState protocolBuffers;
     private byte[] serializationData;
 
-    @Param({"true", "false"})
+    @Param( {"true", "false"})
     boolean nullable;
 
     @Setup(Level.Trial)
-    public void setup(){
+    public void setup() {
       serializationData = nullable ? EquityMarketPriceEvent.NULLABLE_FIELDS_SERIALIZED_MODEL
-                                   : EquityMarketPriceEvent.NON_NULLABLE_FIELDS_SERIALIZED_MODEL;
-      avroCore    = new AvroCoreBenchMarkState(serializationData, nullable);
-      avrodite    = new AvroditeBenchmarkState(serializationData, nullable);
+        : EquityMarketPriceEvent.NON_NULLABLE_FIELDS_SERIALIZED_MODEL;
+      avroCore = new AvroCoreBenchMarkState(serializationData, nullable);
+      avrodite = new AvroditeBenchmarkState(serializationData, nullable);
       jacksonAvro = new JacksonAvroBenchMarkState(serializationData, nullable);
       jacksonJson = new JacksonJsonBenchmarkState();
       protocolBuffers = new ProtocolBuffersBenchmarkState();
