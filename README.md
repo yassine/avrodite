@@ -92,11 +92,11 @@ Refer to this [document](./avrodite-pages/Benchmarks.md) for detailed results.
 | Framework | T1 Heap Allocation Rate [ Byte/op ] | T1 relative perf. |T2 Heap Allocation Rate [ Byte/op ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
 | avrodite | 1024 | 100.00% | 1024 | 100.00% | 
-| protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
 | avroCoreNoHydration | 2248 | 219.53% | 2248 | 219.53% | 
 | avroCoreWithHydration | 3128 | 305.47% | 3128 | 305.47% | 
-| jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
+| protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
 | jacksonJSON | 10320 | 1007.81% | 10320 | 1007.81% | 
+| jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
 
 ![Alt text](./avrodite-pages/images/T1.gc.png?raw=true "Heap Usage")
 
