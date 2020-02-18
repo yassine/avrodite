@@ -24,7 +24,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 | Processor | Intel(R) Core(TM) i7-6900K CPU @ 3.20GHz |
 | Linux     | 5.3.0-29-generic                         |
 | JDK       | OpenJDK 64-Bit Server VM 12.0.2+10       |
-| JVM Args  | -server, -Xms1G, -Dfile.encoding=UTF-8   |
+| JVM Args  | -server, -Xms1G, -javaagent:/code/ide/idea/lib/idea_rt.jar=44169:/code/ide/idea/bin, -Dfile.encoding=UTF-8   |
 
 
 ##### Tested Frameworks
@@ -42,12 +42,12 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 ##### Throughput
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1836 | 100.00% | 2260 | 100.00% | 
-| protocolBuffers | 582 | 31.68% | 580 | 25.66% | 
-| avroCoreNoHydration | 108 | 5.87% | 504 | 22.30% | 
-| avroCoreWithHydration | 103 | 5.63% | 349 | 15.45% | 
-| jacksonAvro | 86 | 4.69% | 151 | 6.67% | 
-| jacksonJSON | 87 | 4.75% | 87 | 3.87% | 
+| avrodite | 1845 | 100.00% | 2260 | 100.00% | 
+| protocolBuffers | 586 | 31.76% | 589 | 26.08% | 
+| avroCoreNoHydration | 112 | 6.06% | 495 | 21.90% | 
+| avroCoreWithHydration | 95 | 5.14% | 248 | 10.99% | 
+| jacksonAvro | 89 | 4.80% | 146 | 6.46% | 
+| jacksonJSON | 89 | 4.83% | 88 | 3.90% | 
 
 
 ##### Heap Usage
@@ -56,9 +56,9 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 |-----------|------------|--------------|------------|--------------|
 | avrodite | 1024 | 100.00% | 1024 | 100.00% | 
 | avroCoreNoHydration | 2248 | 219.53% | 2248 | 219.53% | 
-| avroCoreWithHydration | 3128 | 305.47% | 3128 | 305.47% | 
+| avroCoreWithHydration | 4840 | 472.66% | 4840 | 472.66% | 
 | protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
-| jacksonJSON | 10320 | 1007.81% | 10320 | 1007.81% | 
+| jacksonJSON | 9472 | 925.00% | 9472 | 925.00% | 
 | jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
 
 #### Results Charts
@@ -85,15 +85,14 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 ![Alt text](./images/T2.gc.png?raw=true "T2 Heap Allocation Rate [ Byte/op ]")
 
 
-
-
 ##### Test Fixture (in JSON)
+
 ```json
 {
   "meta" : {
-    "id" : "471373af-dc25-459d-bdb5-2318edbf7074",
-    "parentId" : "f453e8d8-ab9a-493e-bad3-b23eac518732",
-    "correlation" : "1be7f862-37e9-4fce-901e-12435ceb2776"
+    "id" : "2a49ab61-20dd-4e38-88b3-c095cd025c78",
+    "parentId" : "c3656b06-065d-481a-95fc-22cad705551e",
+    "correlation" : "dadebd6e-dc8d-4da1-9682-9f2b02760bd2"
   },
   "target" : {
     "ticker" : "TICKER",
@@ -145,7 +144,9 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
   } ]
 }
 ```
+
 #### Use Case 1 : Nullable Fields Schema
+
 ```json
 {
   "type" : "record",
@@ -218,7 +219,9 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
   "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EquityMarketPriceEvent"
 }
 ```
+
 #### Use Case 2 : Non Nullable Fields Schema
+
 ```
 {
   "type" : "record",

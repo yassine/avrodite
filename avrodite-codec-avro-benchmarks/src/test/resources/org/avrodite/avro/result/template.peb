@@ -91,206 +91,22 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 
 ##### Test Fixture (in JSON)
+
 ```json
-{
-  "meta" : {
-    "id" : "471373af-dc25-459d-bdb5-2318edbf7074",
-    "parentId" : "f453e8d8-ab9a-493e-bad3-b23eac518732",
-    "correlation" : "1be7f862-37e9-4fce-901e-12435ceb2776"
-  },
-  "target" : {
-    "ticker" : "TICKER",
-    "price" : 124.214,
-    "volume" : 125855214,
-    "variation" : -0.0112
-  },
-  "bid" : [ {
-    "count" : 1,
-    "price" : 123.59293,
-    "quantity" : 200000
-  }, {
-    "count" : 2,
-    "price" : 122.97185999999999,
-    "quantity" : 300000
-  }, {
-    "count" : 3,
-    "price" : 122.35079,
-    "quantity" : 400000
-  }, {
-    "count" : 4,
-    "price" : 121.72972,
-    "quantity" : 500000
-  }, {
-    "count" : 5,
-    "price" : 121.10865,
-    "quantity" : 600000
-  } ],
-  "ask" : [ {
-    "count" : 1,
-    "price" : 124.83506999999999,
-    "quantity" : 10000
-  }, {
-    "count" : 2,
-    "price" : 125.45614,
-    "quantity" : 20000
-  }, {
-    "count" : 3,
-    "price" : 126.07720999999998,
-    "quantity" : 30000
-  }, {
-    "count" : 4,
-    "price" : 126.69828,
-    "quantity" : 40000
-  }, {
-    "count" : 5,
-    "price" : 127.31934999999999,
-    "quantity" : 50000
-  } ]
-}
+{{ fixtureJson }}
+
 ```
+
 #### Use Case 1 : Nullable Fields Schema
+
 ```json
-{
-  "type" : "record",
-  "name" : "EquityMarketPriceEvent__BA13F0BA",
-  "namespace" : "org.avrodite.fixtures.event",
-  "fields" : [ {
-    "name" : "meta",
-    "type" : [ {
-      "type" : "record",
-      "name" : "EventMeta__7C3A6F98",
-      "fields" : [ {
-        "name" : "id",
-        "type" : [ "string", "null" ]
-      }, {
-        "name" : "parentId",
-        "type" : [ "string", "null" ]
-      }, {
-        "name" : "correlation",
-        "type" : [ "string", "null" ]
-      } ],
-      "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EventMeta"
-    }, "null" ]
-  }, {
-    "name" : "target",
-    "type" : [ {
-      "type" : "record",
-      "name" : "Equity__862C9147",
-      "fields" : [ {
-        "name" : "ticker",
-        "type" : [ "string", "null" ]
-      }, {
-        "name" : "price",
-        "type" : [ "double", "null" ]
-      }, {
-        "name" : "volume",
-        "type" : [ "long", "null" ]
-      }, {
-        "name" : "variation",
-        "type" : [ "double", "null" ]
-      } ],
-      "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.Equity"
-    }, "null" ]
-  }, {
-    "name" : "bid",
-    "type" : [ {
-      "type" : "array",
-      "items" : {
-        "type" : "record",
-        "name" : "EquityOrder__D2EFF3F5",
-        "fields" : [ {
-          "name" : "count",
-          "type" : [ "int", "null" ]
-        }, {
-          "name" : "price",
-          "type" : [ "double", "null" ]
-        }, {
-          "name" : "quantity",
-          "type" : [ "long", "null" ]
-        } ],
-        "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EquityOrder"
-      }
-    }, "null" ]
-  }, {
-    "name" : "ask",
-    "type" : [ {
-      "type" : "array",
-      "items" : "EquityOrder__D2EFF3F5"
-    }, "null" ]
-  } ],
-  "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EquityMarketPriceEvent"
-}
+{{ t1Schema }}
+
 ```
+
 #### Use Case 2 : Non Nullable Fields Schema
+
 ```
-{
-  "type" : "record",
-  "name" : "EquityMarketPriceEvent__BA13F0BA",
-  "namespace" : "org.avrodite.fixtures.event",
-  "fields" : [ {
-    "name" : "meta",
-    "type" : {
-      "type" : "record",
-      "name" : "EventMeta__7C3A6F98",
-      "fields" : [ {
-        "name" : "id",
-        "type" : "string"
-      }, {
-        "name" : "parentId",
-        "type" : "string"
-      }, {
-        "name" : "correlation",
-        "type" : "string"
-      } ],
-      "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EventMeta"
-    }
-  }, {
-    "name" : "target",
-    "type" : {
-      "type" : "record",
-      "name" : "Equity__862C9147",
-      "fields" : [ {
-        "name" : "ticker",
-        "type" : "string"
-      }, {
-        "name" : "price",
-        "type" : "double"
-      }, {
-        "name" : "volume",
-        "type" : "long"
-      }, {
-        "name" : "variation",
-        "type" : "double"
-      } ],
-      "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.Equity"
-    }
-  }, {
-    "name" : "bid",
-    "type" : {
-      "type" : "array",
-      "items" : {
-        "type" : "record",
-        "name" : "EquityOrder__D2EFF3F5",
-        "fields" : [ {
-          "name" : "count",
-          "type" : "int"
-        }, {
-          "name" : "price",
-          "type" : "double"
-        }, {
-          "name" : "quantity",
-          "type" : "long"
-        } ],
-        "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EquityOrder"
-      }
-    }
-  }, {
-    "name" : "ask",
-    "type" : {
-      "type" : "array",
-      "items" : "EquityOrder__D2EFF3F5"
-    }
-  } ],
-  "org.avrodite.avro.javaType" : "org.avrodite.fixtures.event.EquityMarketPriceEvent"
-}
+{{ t2Schema }}
+
 ```

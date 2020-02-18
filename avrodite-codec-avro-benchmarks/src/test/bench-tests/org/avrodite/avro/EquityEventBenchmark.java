@@ -52,7 +52,7 @@ public class EquityEventBenchmark {
 
   @SneakyThrows
   public static void main(String[] args) {
-    new EquityEventBenchmark().run();
+    //new EquityEventBenchmark().run();
     report(OUTPUT_FILE, "avrodite-pages");
   }
 
@@ -106,49 +106,21 @@ public class EquityEventBenchmark {
     return record;
   }
 
+  /*
+    Comparing to 'avroCoreNoHydration' this includes the mapping between the record API and the
+    api model.
+   */
   @Benchmark
   @SneakyThrows
   public EquityMarketPriceEvent avroCoreWithHydration(BenchmarkState benchmarkState) {
     benchmarkState.avroCore.byteArrayOutputStream.reset();
+    //map from model to record ->
+    GenericData.Record record = benchmarkState.avroCore.eventRecord;
+    benchmarkState.avroCore.toRecordData(record);
     benchmarkState.avroCore.datumWriter.write(benchmarkState.avroCore.eventRecord, EncoderFactory.get().binaryEncoder(benchmarkState.avroCore.byteArrayOutputStream, benchmarkState.avroCore.binaryEncoder));
-    GenericData.Record record = new GenericData.Record(requireNonNull(benchmarkState.avroCore.eventSchema));
     record = benchmarkState.avroCore.datumReader.read(record, DecoderFactory.get().binaryDecoder(benchmarkState.serializationData, null));
-    GenericData.Record targetRecord = (GenericData.Record) record.get("target");
-    GenericData.Record metaRecord = (GenericData.Record) record.get("meta");
-    //for fair results, include the 'effort' of hydrating a bean as per other frameworks
-    EquityMarketPriceEvent event = new EquityMarketPriceEvent();
-    EventMeta meta = new EventMeta();
-    Equity equity = new Equity();
-    meta.setCorrelation(metaRecord.get("correlation").toString());
-    meta.setId(metaRecord.get("id").toString());
-    meta.setParentId(metaRecord.get("parentId").toString());
-    equity.setPrice((double) targetRecord.get("price"));
-    equity.setTicker(targetRecord.get("ticker").toString());
-    equity.setVolume((long) targetRecord.get("volume"));
-    equity.setVariation((double) targetRecord.get("variation"));
-    event.setMeta(meta);
-    event.setTarget(equity);
-    List<GenericData.Record> bidRecords = (List<GenericData.Record>) record.get("bid");
-    List<GenericData.Record> asksRecords = (List<GenericData.Record>) record.get("ask");
-    List<EquityOrder> bid = new ArrayList<>(bidRecords.size());
-    List<EquityOrder> ask = new ArrayList<>(asksRecords.size());
-    for (GenericData.Record orderRecord : bidRecords) {
-      EquityOrder eqOrder = new EquityOrder();
-      eqOrder.setQuantity((long) orderRecord.get("quantity"));
-      eqOrder.setPrice((double) orderRecord.get("price"));
-      eqOrder.setCount((int) orderRecord.get("count"));
-      bid.add(eqOrder);
-    }
-    for (GenericData.Record orderRecord : asksRecords) {
-      EquityOrder eqOrder = new EquityOrder();
-      eqOrder.setQuantity((long) orderRecord.get("quantity"));
-      eqOrder.setPrice((double) orderRecord.get("price"));
-      eqOrder.setCount((int) orderRecord.get("count"));
-      ask.add(eqOrder);
-    }
-    event.setAsk(ask);
-    event.setBid(bid);
-    return event;
+    //map from record to model <-
+    return benchmarkState.avroCore.eventFrom(record);
   }
 
   @Benchmark
@@ -184,9 +156,10 @@ public class EquityEventBenchmark {
   @SneakyThrows
   @Benchmark
   public EquityMarketPriceEvent jacksonJSON(BenchmarkState benchmarkState) {
-    return benchmarkState.jacksonJson.mapper.readValue(
-      benchmarkState.jacksonJson.mapper.writeValueAsBytes(benchmarkState.jacksonJson.model), EquityMarketPriceEvent.class
-    );
+    benchmarkState.jacksonJson.os.reset();
+    benchmarkState.jacksonJson.is.reset();
+    benchmarkState.jacksonJson.mapper.writeValue(benchmarkState.jacksonJson.os, benchmarkState.jacksonJson.model);
+    return benchmarkState.jacksonJson.mapper.readValue(benchmarkState.jacksonJson.is, EquityMarketPriceEvent.class);
   }
 
 }

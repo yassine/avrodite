@@ -16,6 +16,7 @@ import org.avrodite.avro.result.BenchResultModel;
 import org.avrodite.avro.result.PlotUtils;
 import org.avrodite.avro.result.TemplateContext;
 import org.avrodite.avro.result.TestRepresentation;
+import org.avrodite.fixtures.event.EquityMarketPriceEvent;
 
 /**
  * helps generate bench results docs from benchmarks output
@@ -34,6 +35,9 @@ public class ReportUtils {
     PlotUtils.plot(t2, imagesOutputDir, "/code/webdriver/geckodriver");
     HashMap<String, Object> contextMap = new HashMap<>();
     contextMap.put("context", new TemplateContext(Arrays.asList(t1, t2), modelsArr[0]));
+    contextMap.put("t1Schema", EquityMarketPriceEvent.SERIALIZED_MODEL_SCHEMA);
+    contextMap.put("t2Schema", EquityMarketPriceEvent.NON_NULLABLE_FIELDS_SERIALIZED_MODEL_SCHEMA);
+    contextMap.put("fixtureJson", fixtureModel());
     PebbleEngine engine = new PebbleEngine.Builder().autoEscaping(false).build();
     PebbleTemplate codecTemplate = engine.getTemplate("org/avrodite/avro/result/template.peb");
     Writer codecSourceWriter = new FileWriter(new File(outputDir, "Benchmarks.md"));
@@ -45,6 +49,12 @@ public class ReportUtils {
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     return mapper.readValue(new FileInputStream(path), BenchResultModel[].class);
+  }
+
+  @SneakyThrows
+  private static String fixtureModel(){
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(EquityMarketPriceEvent.create());
   }
 
 }

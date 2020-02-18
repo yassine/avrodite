@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
@@ -58,25 +60,29 @@ public class AvroCoreBenchMarkState {
     equitySchema = avroCodecManager.<Equity, AvroCodec<Equity>>getBeanCodec(Equity.class).getSchema();
     equityOrderSchema = avroCodecManager.<EquityOrder, AvroCodec<EquityOrder>>getBeanCodec(EquityOrder.class).getSchema();
 
-
     equityRecord = new GenericData.Record(requireNonNull(equitySchema));
     eventRecord = new GenericData.Record(requireNonNull(eventSchema));
     metaRecord = new GenericData.Record(requireNonNull(metaSchema));
-
     datumWriter = new GenericDatumWriter<>(eventSchema);
     datumReader = new GenericDatumReader<>(eventSchema);
 
-    initRecordsData();
+    eventRecord.put("meta", metaRecord);
+    eventRecord.put("target", equityRecord);
+
+    toRecordData(eventRecord);
 
   }
 
-  private void initRecordsData(){
+  /*
+  hydrating from model to record
+   */
+  public void toRecordData(GenericData.Record eventRecord){
+    GenericData.Record equityRecord = (GenericData.Record) eventRecord.get("target");
+    GenericData.Record metaRecord = (GenericData.Record) eventRecord.get("meta");
     equityRecord.put("price", model.getTarget().getPrice());
     equityRecord.put("ticker", model.getTarget().getTicker());
     equityRecord.put("variation", model.getTarget().getVariation());
     equityRecord.put("volume", model.getTarget().getVolume());
-    eventRecord.put("meta", metaRecord);
-    eventRecord.put("target", equityRecord);
     metaRecord.put("correlation", model.getMeta().getCorrelation());
     metaRecord.put("id", model.getMeta().getId());
     metaRecord.put("parentId", model.getMeta().getParentId());
@@ -100,5 +106,47 @@ public class AvroCoreBenchMarkState {
         return record;
       }).collect(toList())
     );
+  }
+
+  /*
+  hydrating from record to model
+   */
+  @SuppressWarnings("unchecked")
+  public EquityMarketPriceEvent eventFrom(GenericData.Record record){
+    GenericData.Record targetRecord = (GenericData.Record) record.get("target");
+    GenericData.Record metaRecord = (GenericData.Record) record.get("meta");
+    EquityMarketPriceEvent event = new EquityMarketPriceEvent();
+    EventMeta meta = new EventMeta();
+    Equity equity = new Equity();
+    meta.setCorrelation(metaRecord.get("correlation").toString());
+    meta.setId(metaRecord.get("id").toString());
+    meta.setParentId(metaRecord.get("parentId").toString());
+    equity.setPrice((double) targetRecord.get("price"));
+    equity.setTicker(targetRecord.get("ticker").toString());
+    equity.setVolume((long) targetRecord.get("volume"));
+    equity.setVariation((double) targetRecord.get("variation"));
+    event.setMeta(meta);
+    event.setTarget(equity);
+    List<GenericData.Record> bidRecords = (List<GenericData.Record>) record.get("bid");
+    List<GenericData.Record> asksRecords = (List<GenericData.Record>) record.get("ask");
+    List<EquityOrder> bid = new ArrayList<>(bidRecords.size());
+    List<EquityOrder> ask = new ArrayList<>(asksRecords.size());
+    for (GenericData.Record orderRecord : bidRecords) {
+      EquityOrder eqOrder = new EquityOrder();
+      eqOrder.setQuantity((long) orderRecord.get("quantity"));
+      eqOrder.setPrice((double) orderRecord.get("price"));
+      eqOrder.setCount((int) orderRecord.get("count"));
+      bid.add(eqOrder);
+    }
+    for (GenericData.Record orderRecord : asksRecords) {
+      EquityOrder eqOrder = new EquityOrder();
+      eqOrder.setQuantity((long) orderRecord.get("quantity"));
+      eqOrder.setPrice((double) orderRecord.get("price"));
+      eqOrder.setCount((int) orderRecord.get("count"));
+      ask.add(eqOrder);
+    }
+    event.setAsk(ask);
+    event.setBid(bid);
+    return event;
   }
 }
