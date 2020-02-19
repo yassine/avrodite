@@ -88,8 +88,6 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 {% endfor %}
 
-
-
 ##### Test Fixture (in JSON)
 
 ```json
@@ -106,7 +104,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 #### Use Case 2 : Non Nullable Fields Schema
 
-```
+```json
 {{ t2Schema }}
 
 ```

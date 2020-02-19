@@ -41,9 +41,8 @@ public class MetricRepresentation {
     this.sortOrder = sortOrder;
   }
 
-  public String metricOfFramework(String framework){
-
-    return String.format("%.0f",metricByFramework.get(framework).getScore());
+  public String metricOfFramework(String framework) {
+    return String.format("%.0f", metricByFramework.get(framework).getScore());
   }
 
   public MetricRepresentation(String id, String metricName, SortOrder sortOrder, List<BenchResultModel> results, Function<BenchResultModel, BenchResultModel.Metric> extractor, TestRepresentation testRepresentation) {
@@ -64,7 +63,7 @@ public class MetricRepresentation {
       }));
 
     metricByFramework = sortedResults.stream()
-      .collect(toMap( v -> friendlyBenchmarkName.get(v.getBenchmark()), extractor));
+      .collect(toMap(v -> friendlyBenchmarkName.get(v.getBenchmark()), extractor));
 
     StringColumn subject = StringColumn.create("Framework");
     DoubleColumn metricColumn = DoubleColumn.create(metricName);
@@ -92,13 +91,12 @@ public class MetricRepresentation {
       });
 
     dataTable = Table.create(subject, metricColumn);
-    if(sortOrder.equals(SortOrder.ASC)){
+    if (sortOrder.equals(SortOrder.ASC)) {
       dataTable = dataTable.sortDescendingOn(metricColumn.name());
-    }else{
+    } else {
       dataTable = dataTable.sortAscendingOn(metricColumn.name());
     }
     relativeDataTable = Table.create(subject, relativePerformance);
-
 
     Layout layout = Layout.builder().title(metricName).height(500).width(1000)
       .margin(Margin.builder().left(160).build())
@@ -117,7 +115,7 @@ public class MetricRepresentation {
       .collect(toList());
   }
 
-  public String imageName(){
+  public String imageName() {
     return String.join(".", testRepresentation.getId(), id, PNG_EXT);
   }
 }

@@ -3,8 +3,6 @@ package org.avrodite.avro;
 import static java.util.Objects.requireNonNull;
 import static org.avrodite.avro.ReportUtils.report;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -16,10 +14,7 @@ import org.avrodite.avro.state.AvroditeBenchmarkState;
 import org.avrodite.avro.state.JacksonAvroBenchMarkState;
 import org.avrodite.avro.state.JacksonJsonBenchmarkState;
 import org.avrodite.avro.state.ProtocolBuffersBenchmarkState;
-import org.avrodite.fixtures.event.Equity;
 import org.avrodite.fixtures.event.EquityMarketPriceEvent;
-import org.avrodite.fixtures.event.EquityOrder;
-import org.avrodite.fixtures.event.EventMeta;
 import org.avrodite.proto.EquityEvents;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -52,7 +47,7 @@ public class EquityEventBenchmark {
 
   @SneakyThrows
   public static void main(String[] args) {
-    //new EquityEventBenchmark().run();
+    new EquityEventBenchmark().run();
     report(OUTPUT_FILE, "avrodite-pages");
   }
 

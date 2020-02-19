@@ -24,7 +24,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 | Processor | Intel(R) Core(TM) i7-6900K CPU @ 3.20GHz |
 | Linux     | 5.3.0-29-generic                         |
 | JDK       | OpenJDK 64-Bit Server VM 12.0.2+10       |
-| JVM Args  | -server, -Xms1G, -javaagent:/code/ide/idea/lib/idea_rt.jar=44169:/code/ide/idea/bin, -Dfile.encoding=UTF-8   |
+| JVM Args  | -server, -Xms1G, -Dfile.encoding=UTF-8   |
 
 
 ##### Tested Frameworks
@@ -42,12 +42,12 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 ##### Throughput
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1845 | 100.00% | 2260 | 100.00% | 
-| protocolBuffers | 586 | 31.76% | 589 | 26.08% | 
-| avroCoreNoHydration | 112 | 6.06% | 495 | 21.90% | 
-| avroCoreWithHydration | 95 | 5.14% | 248 | 10.99% | 
-| jacksonAvro | 89 | 4.80% | 146 | 6.46% | 
-| jacksonJSON | 89 | 4.83% | 88 | 3.90% | 
+| avrodite | 1854 | 100.00% | 2215 | 100.00% | 
+| protocolBuffers | 582 | 31.41% | 590 | 26.64% | 
+| avroCoreNoHydration | 109 | 5.89% | 510 | 23.04% | 
+| avroCoreWithHydration | 94 | 5.06% | 251 | 11.32% | 
+| jacksonAvro | 88 | 4.77% | 146 | 6.61% | 
+| jacksonJSON | 89 | 4.78% | 87 | 3.92% | 
 
 
 ##### Heap Usage
@@ -222,7 +222,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 #### Use Case 2 : Non Nullable Fields Schema
 
-```
+```json
 {
   "type" : "record",
   "name" : "EquityMarketPriceEvent__BA13F0BA",

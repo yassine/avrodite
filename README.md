@@ -29,20 +29,20 @@ adopted libraries. It has full support for Java generics and complex types (We'v
 fields of this kind `List<Map<String, Event<Map<String, String>, Model<A,B>>>>` and it passes). 
 From a performance perspective, it performs 3x-4x better than its closest mate, between 5x and 15x than 
 Avro core Record API.
-Regarding usability, the interaction with Avrodite API would consist of something like so
+Regarding usability, the interaction with Avrodite API would consist of something like so:
 ```java
 //API configuration would happen in your dependency injection layer 
 Avrodite<AvroStandard, AvroCodec<?>> avrodite = AvroStandardV19.avrodite()
                                                       .discoverCodecsAt(yourAPIPackage)
                                                       .build();                                                               
-//once you catch an avrodite instance you can get a codec for a given target like so
+//once you catch an avrodite instance you can get a codec for a given target as follows:
 AvroCodec<Model> codec = avrodite.getCodec(Model.class);
 
 //serialization and deserialization is then trivial
 byte[] avroData = codec.encode(new Model());
 Model decodedModel = codec.decode(avroData);
 
-//When needed, you can get your schema from the codec instance like so
+//When needed, you can get your schema from the codec instance like so:
 Schema schema = codec.getSchema();
 
 ```
@@ -76,12 +76,12 @@ Refer to this [document](./avrodite-pages/Benchmarks.md) for detailed results.
 
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1845 | 100.00% | 2260 | 100.00% | 
-| protocolBuffers | 586 | 31.76% | 589 | 26.08% | 
-| avroCoreNoHydration | 112 | 6.06% | 495 | 21.90% | 
-| avroCoreWithHydration | 95 | 5.14% | 248 | 10.99% | 
-| jacksonAvro | 89 | 4.80% | 146 | 6.46% | 
-| jacksonJSON | 89 | 4.83% | 88 | 3.90% | 
+| avrodite | 1854 | 100.00% | 2215 | 100.00% | 
+| protocolBuffers | 582 | 31.41% | 590 | 26.64% | 
+| avroCoreNoHydration | 109 | 5.89% | 510 | 23.04% | 
+| avroCoreWithHydration | 94 | 5.06% | 251 | 11.32% | 
+| jacksonAvro | 88 | 4.77% | 146 | 6.61% | 
+| jacksonJSON | 89 | 4.78% | 87 | 3.92% | 
 
 ![Alt text](./avrodite-pages/images/T1.thrpt.png?raw=true "Throughput")
 
@@ -110,4 +110,5 @@ re-used to support other formats such as JSON. (average difficulty, depends on f
 
 #### Licence
 Copyright (c) 2020 Yassine Echabbi
+
 Licensed under the Apache License, Version 2.0
