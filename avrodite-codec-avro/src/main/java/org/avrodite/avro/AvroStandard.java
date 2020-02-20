@@ -5,10 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.avrodite.Avrodite;
 import org.avrodite.api.CodecStandard;
 import org.avrodite.api.CodecStandardApi;
-import org.avrodite.avro.v1_9.AvroStandardV19;
 
 @Accessors(fluent = true)
 @EqualsAndHashCode
@@ -29,11 +27,6 @@ public class AvroStandard implements CodecStandard<AvroInputByteBuffer, AvroOutp
   @Override
   public CodecStandardApi<AvroInputByteBuffer, AvroOutputByteBuffer, AvroCodec<?>, AvroValueCodec<?>> api() {
     return API;
-  }
-
-  public static Avrodite.AvroditeBuilder<AvroStandard, AvroCodec<?>> avrodite() {
-
-    return Avrodite.builder(AvroStandardV19.AVRO_1_9);
   }
 
   private static final CodecStandardApi<AvroInputByteBuffer, AvroOutputByteBuffer, AvroCodec<?>, AvroValueCodec<?>> API = new CodecStandardApi<AvroInputByteBuffer, AvroOutputByteBuffer, AvroCodec<?>, AvroValueCodec<?>>() {

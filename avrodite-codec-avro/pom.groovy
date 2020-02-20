@@ -6,11 +6,8 @@ project(artifactId: 'avrodite-codec-avro', version: '0.1.0-SNAPSHOT') {
     dependency('org.avrodite:avrodite-api')
     dependency('org.apache.avro:avro:1.8.1') { exclusions('org.slf4j:slf4j-api') }
     /* utilities */
-    dependency('com.google.auto.service:auto-service')
     dependency('org.projectlombok:lombok')
     dependency('ru.vyarus:generics-resolver')
-    dependency('io.github.classgraph:classgraph')
-    dependency('com.machinezoo.noexception:noexception')
     /* logging */
     dependency('ch.qos.logback:logback-classic')
     dependency('org.jboss.logging:jboss-logging-annotations')

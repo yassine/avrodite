@@ -1,5 +1,7 @@
 package org.avrodite.avro.v1_8;
 
+import org.avrodite.Avrodite;
+import org.avrodite.avro.AvroCodec;
 import org.avrodite.avro.AvroStandard;
 
 public class AvroStandardV18 extends AvroStandard {
@@ -10,4 +12,7 @@ public class AvroStandardV18 extends AvroStandard {
     super(VERSION);
   }
 
+  public static Avrodite.AvroditeBuilder<AvroStandard, AvroCodec<?>> avrodite() {
+    return Avrodite.builder(AVRO_1_8);
+  }
 }

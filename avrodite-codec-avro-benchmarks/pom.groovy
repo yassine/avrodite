@@ -6,6 +6,8 @@ project(artifactId: 'avrodite-codec-avro-benchmarks', version: '0.1.0-SNAPSHOT')
     dependency('org.avrodite:avrodite-api')
     dependency('org.avrodite:avrodite-codec-avro')
     dependency('org.avrodite:avrodite-tools-avro')
+    /* utilities */
+    dependency('org.projectlombok:lombok')
     /* logging */
     dependency('ch.qos.logback:logback-classic')
     dependency('org.jboss.logging:jboss-logging-annotations')

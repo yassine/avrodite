@@ -1,23 +1,25 @@
 package org.avrodite;
 
-import static java.lang.Thread.currentThread;
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isInterface;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.Spliterators.spliteratorUnknownSize;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.vyarus.java.generics.resolver.GenericsResolver.resolve;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +68,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     private final Set<Package> includedPackages = new HashSet<>();
     private final Set<Class<?>> userCodecs = new HashSet<>();
 
+    @Deprecated
     public AvroditeBuilder<S, C> discoverCodecsAt(Package... pkgs) {
       includedPackages.addAll(asList(pkgs));
       return this;
@@ -79,25 +82,12 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     public Avrodite<S, C> build() {
       HashMap<Type, C> codecIndex = new HashMap<>();
       Avrodite<S, C> avrodite = new Avrodite<>(standard);
-      if (!includedPackages.isEmpty()) {
-        new ClassGraph().whitelistPathsNonRecursive(
-          includedPackages.stream()
-            .map(Package::getName)
-            .map(name -> name.replaceAll("\\.", "/"))
-            .distinct()
-            .toArray(String[]::new)
-        ).enableAnnotationInfo()
-          .enableClassInfo()
-          .addClassLoader(currentThread().getContextClassLoader())
-          .scan()
-          .getClassesImplementing(Codec.class.getName()).stream()
-          .map(ClassInfo::getName)
-          .map(this::classForName)
-          .filter(clazz -> !isAbstract(clazz.getModifiers()))
-          .filter(clazz -> !isInterface(clazz.getModifiers()))
-          .filter(standard.api().typeCodecApi()::isAssignableFrom)
-          .forEach(clazz -> register(clazz, codecIndex, avrodite));
-      }
+      StreamSupport.stream(spliteratorUnknownSize(ServiceLoader.load(standard.api().typeCodecApi()).iterator(), Spliterator.ORDERED), false)
+        .filter(Objects::nonNull)
+        .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
+        .map(codec -> codecIndex.computeIfAbsent(getCodecTarget(codec.getClass()), a -> codec))
+        .filter(codec -> Configurable.class.isAssignableFrom(codec.getClass()))
+        .forEach(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
 
       userCodecs.stream()
         .filter(clazz -> !isAbstract(clazz.getModifiers()))
@@ -112,7 +102,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     private void register(Class<?> clazz, HashMap<Type, C> codecIndex, Avrodite<S, C> avrodite) {
       ofNullable(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
         .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
-        .map(codec -> codecIndex.put(getCodecTarget(clazz), codec))
+        .map(codec -> codecIndex.computeIfAbsent(getCodecTarget(codec.getClass()), a -> codec))
         .filter(codec -> Configurable.class.isAssignableFrom(clazz))
         .ifPresent(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
     }

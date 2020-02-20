@@ -19,6 +19,7 @@ project(artifactId: 'avrodite-avro-maven-plugin', version: '0.1.0-SNAPSHOT') {
     dependency('org.apache.maven:maven-compat:3.6.3:test')
     dependency('io.takari.polyglot:polyglot-groovy:0.4.4:test')
     dependency('org.mockito:mockito-core:3.2.4:test')
+    dependency('junit:junit:4.13:test')
   }
 
   profiles {

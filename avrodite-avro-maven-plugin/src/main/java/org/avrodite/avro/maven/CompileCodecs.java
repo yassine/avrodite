@@ -3,9 +3,12 @@ package org.avrodite.avro.maven;
 import static com.google.common.io.Files.write;
 import static java.lang.String.format;
 
+import com.machinezoo.noexception.Exceptions;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +30,7 @@ import org.avrodite.avro.v1_8.AvroStandardV18;
 import org.avrodite.tools.AvroditeTools;
 import org.avrodite.tools.compiler.Compilation;
 
-@SuppressWarnings( {"unused", "MismatchedQueryAndUpdateOfCollection"})
+@SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 @Mojo(name = "compile-codecs", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 @Slf4j
 @Accessors(chain = true)
@@ -54,12 +57,30 @@ public class CompileCodecs extends AbstractMojo {
     URL[] urls = classpathItems.stream().map(this::toURL).toArray(URL[]::new);
     try (URLClassLoader urlClassLoader = new URLClassLoader(urls, getClass().getClassLoader())) {
       Thread.currentThread().setContextClassLoader(urlClassLoader);
-      AvroditeTools.compiler(AvroStandardV18.AVRO_1_8)
+      Set<Compilation> compilations = AvroditeTools.compiler(AvroStandardV18.AVRO_1_8)
         .discover(contextPackages.toArray(new String[0]))
         .addClassLoader(urlClassLoader)
         .addClassPathItems(classpathItems.toArray(new String[0]))
-        .compile()
-        .forEach(this::writeToFile);
+        .compile();
+      compilations.forEach(this::writeToFile);
+      File spiDir = new File(output, "META-INF/services");
+      log.info("creating spi services dir: {}", spiDir.mkdirs());
+      File spiFile = new File(spiDir, AvroStandardV18.AVRO_1_8.api().typeCodecApi().getName());
+      Set<String> services = new HashSet<>();
+      if (spiFile.exists()) {
+        services.addAll(Files.readAllLines(spiFile.toPath()));
+      }
+      compilations.forEach(compilation -> services.add(compilation.name()));
+      try (BufferedWriter writer = Files.newBufferedWriter(spiFile.toPath())) {
+        services.forEach(service -> {
+          Exceptions.sneak().run(() -> {
+            writer.write(service);
+            writer.newLine();
+          });
+        });
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
