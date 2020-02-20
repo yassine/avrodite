@@ -3,8 +3,8 @@ package org.avrodite.tools.template;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 import static org.avrodite.tools.core.utils.TypeUtils.typeToString;
+import static org.avrodite.tools.core.utils.TypeUtils.typeTrace;
 import static org.avrodite.tools.template.Utils.codecFqName;
-import static org.avrodite.tools.utils.TypeUtils.typeTrace;
 
 import java.util.ArrayList;
 import java.util.List;

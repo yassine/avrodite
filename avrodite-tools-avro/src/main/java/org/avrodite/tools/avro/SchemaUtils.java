@@ -3,7 +3,7 @@ package org.avrodite.tools.avro;
 import static java.util.Collections.unmodifiableMap;
 import static org.avrodite.tools.core.utils.CryptoUtils.hashSHA256;
 import static org.avrodite.tools.core.utils.TypeUtils.typeToString;
-import static org.avrodite.tools.utils.TypeUtils.typeTrace;
+import static org.avrodite.tools.core.utils.TypeUtils.typeTrace;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

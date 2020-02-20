@@ -5,8 +5,6 @@ import static org.avrodite.avro.v1_8.AvroStandardV18.AVRO_1_8;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import lombok.SneakyThrows;
 import org.avrodite.Avrodite;
 import org.avrodite.avro.AvroCodec;
 import org.avrodite.avro.AvroInputByteBuffer;
