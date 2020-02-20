@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.UtilityClass;
 import org.avrodite.api.CodecStandard;
-import org.avrodite.api.ValueCodec;
 import org.avrodite.tools.compiler.Compilation;
 import org.avrodite.tools.core.bean.BeanManager;
 import org.avrodite.tools.core.bean.NullableFieldPredicate;
@@ -22,13 +21,13 @@ import org.avrodite.tools.utils.PluginUtils;
 @UtilityClass
 public class AvroditeTools {
 
-  public static <S extends CodecStandard<?, ?, ?, V>, V extends ValueCodec<?, ?, ?, S>> CompilerBuilder<S, V> compiler(S codecStandard) {
+  public static <S extends CodecStandard<?, ?, ?, ?>> CompilerBuilder<S> compiler(S codecStandard) {
     return new CompilerBuilder<>(requireNonNull(codecStandard));
   }
 
   @Accessors(fluent = true, chain = true)
   @RequiredArgsConstructor
-  public static class CompilerBuilder<S extends CodecStandard<?, ?, ?, V>, V extends ValueCodec<?, ?, ?, S>> {
+  public static class CompilerBuilder<S extends CodecStandard<?, ?, ?, ?>> {
 
     private final Set<Class<?>> excludeClasses = new HashSet<>();
     private final Set<ClassLoader> classLoaders = new HashSet<>();
@@ -40,7 +39,7 @@ public class AvroditeTools {
 
     public Set<Compilation> compile() {
       return Optional.ofNullable(standard)
-        .map(s -> TemplateCompiler.<V>builder()
+        .map(s -> TemplateCompiler.builder()
           .beanManager(
             BeanManager.builder(s)
               .addClassLoaders(classLoaders)
@@ -56,22 +55,22 @@ public class AvroditeTools {
         ).orElseThrow(() -> AvroditeToolsException.API.illegalNullArgument("codec standard"));
     }
 
-    public CompilerBuilder<S, V> discover(String... pkgs) {
+    public CompilerBuilder<S> discover(String... pkgs) {
       discoveryPackages.addAll(asList(pkgs));
       return this;
     }
 
-    public CompilerBuilder<S, V> addClassLoader(ClassLoader classLoader) {
+    public CompilerBuilder<S> addClassLoader(ClassLoader classLoader) {
       classLoaders.add(classLoader);
       return this;
     }
 
-    public CompilerBuilder<S, V> exclude(Class<?>... classes) {
+    public CompilerBuilder<S> exclude(Class<?>... classes) {
       excludeClasses.addAll(asList(classes));
       return this;
     }
 
-    public CompilerBuilder<S, V> addClassPathItems(String... items) {
+    public CompilerBuilder<S> addClassPathItems(String... items) {
       classPathItems.addAll(asList(items));
       return this;
     }

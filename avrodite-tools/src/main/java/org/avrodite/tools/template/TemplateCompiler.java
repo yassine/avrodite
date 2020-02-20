@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.avrodite.api.ValueCodec;
 import org.avrodite.tools.api.AvroditeToolsPlugin;
 import org.avrodite.tools.compiler.CodecCompiler;
 import org.avrodite.tools.core.bean.BeanManager;
@@ -24,7 +23,7 @@ public class TemplateCompiler {
   @Getter
   private final CodecCompiler compiler;
 
-  public static <V extends ValueCodec<?, ?, ?, ?>> Builder builder() {
+  public static Builder builder() {
     return new Builder();
   }
 
