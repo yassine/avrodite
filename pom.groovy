@@ -40,12 +40,12 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('org.avrodite:avrodite-avro:0.1.0-SNAPSHOT')
       dependency('org.avrodite:avrodite-tools:0.1.0-SNAPSHOT')
       dependency('org.avrodite:avrodite-tools-avro:0.1.0-SNAPSHOT')
-
+      /* annotation processors */
       dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
+      dependency('org.projectlombok:lombok:${version.utilities.lombok}:provided')
       /* java core language utilities */
       dependency('com.machinezoo.noexception:noexception:${version.utilities.no-exception}') { exclusions('org.slf4j:slf4j-api') }
       dependency('io.github.classgraph:classgraph:${version.utilities.classgraph}')
-      dependency('org.projectlombok:lombok:${version.utilities.lombok}:provided')
       dependency('ru.vyarus:generics-resolver:${version.utilities.vyarus-generics}')
       /* logging */
       dependency('ch.qos.logback:logback-classic:${version.logging.logback}')
