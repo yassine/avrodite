@@ -27,8 +27,10 @@ lowest possible memory footprint and offer an API for re-using existing objects 
 Currently the library fulfills most of its design objectives and is performing better than many widely 
 adopted libraries. It has full support for Java generics and complex types (We've stress-tested it with 
 fields of this kind `List<Map<String, Event<Map<String, String>, Model<A,B>>>>` and it passes). 
-From a performance perspective, it performs 3x-4x better than its closest mate, between 5x and 15x than 
-Avro core Record API.
+
+From a performance perspective, Avrodite performs 3x-4x better than its closest mate, between 5x and 15x than 
+Avro core Record API (See benchmarks reports).
+
 Regarding usability, the interaction with Avrodite API would consist of something like so:
 ```java
 //API configuration would happen in your dependency injection layer 
@@ -75,12 +77,12 @@ Refer to this [document](./avrodite-pages/Benchmarks.md) for detailed results.
 
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1832 | 100.00% | 2265 | 100.00% | 
-| protocolBuffers | 584 | 31.88% | 630 | 27.81% | 
-| avroCoreNoHydration | 135 | 7.35% | 502 | 22.15% | 
-| avroCoreWithHydration | 100 | 5.43% | 233 | 10.30% | 
-| jacksonAvro | 89 | 4.86% | 149 | 6.58% | 
-| jacksonJSON | 88 | 4.82% | 87 | 3.85% | 
+| avrodite | 1858 | 100.00% | 2208 | 100.00% | 
+| protocolBuffers | 585 | 31.47% | 589 | 26.67% | 
+| avroCoreNoHydration | 132 | 7.08% | 501 | 22.67% | 
+| avroCoreWithHydration | 102 | 5.48% | 239 | 10.82% | 
+| jacksonAvro | 87 | 4.68% | 158 | 7.14% | 
+| jacksonJSON | 88 | 4.74% | 89 | 4.02% | 
 
 ![Alt text](./avrodite-pages/images/T1.thrpt.png?raw=true "Throughput")
 

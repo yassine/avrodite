@@ -55,7 +55,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('org.jboss.logging:jboss-logging:${version.logging.jboss}')
       /* testing */
       dependency('org.junit.jupiter:junit-jupiter:${version.testing.junit}:test')
-      dependency 'org.junit.vintage:junit-vintage-engine:${version.testing.junit}:test'
+      dependency('org.junit.vintage:junit-vintage-engine:${version.testing.junit}:test')
       dependency('org.hamcrest:hamcrest:2.2:test')
       dependency('org.assertj:assertj-core:3.15.0:test')
       dependency('org.openjdk.jmh:jmh-core:${version.testing.jmh}:test')
@@ -250,6 +250,9 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
                   testClassesDirectory '${project.build.directory}/bench-tests-classes'
                   includes {
                     include '**/*Benchmark'
+                  }
+                  additionalClasspathElements {
+                    additionalClasspathElement '${project.build.directory}/test-classes'
                   }
                 }
               }

@@ -2,6 +2,7 @@ package org.avrodite.avro.result;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,7 +34,7 @@ public class BenchResultModel {
   }
 
   public String jvmArgsList() {
-    return String.join(", ", jvmArgs.toArray(new String[0]));
+    return String.join(", ", jvmArgs.stream().filter(s -> !s.startsWith("-D")).distinct().toArray(String[]::new));
   }
 
   @Getter

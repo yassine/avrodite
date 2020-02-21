@@ -41,6 +41,7 @@ public class PlotUtils {
       driver
     );
     FileUtils.deleteDirectory(downloadDir);
+    driver.quit();
   }
 
   @SneakyThrows

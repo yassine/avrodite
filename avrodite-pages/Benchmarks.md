@@ -15,7 +15,7 @@ We run 2 tests:
 1. Test 1 (T1): All fields are nullable
 2. Test 2 (T2): All fields are NON nullable
 
-The tests classes are available under the 'avrodite-codec-avro-benchmarks' module.
+The tests classes are available under the 'avrodite-avro-benchmarks' module.
 
 #### Test Environment
 
@@ -24,7 +24,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 | Processor | Intel(R) Core(TM) i7-6900K CPU @ 3.20GHz |
 | Linux     | 5.3.0-29-generic                         |
 | JDK       | OpenJDK 64-Bit Server VM 12.0.2+10       |
-| JVM Args  | -server, -Xms1G, -Dfile.encoding=UTF-8   |
+| JVM Args  | -server, -Xms1G   |
 
 
 ##### Tested Frameworks
@@ -42,12 +42,12 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 ##### Throughput
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1832 | 100.00% | 2265 | 100.00% | 
-| protocolBuffers | 584 | 31.88% | 630 | 27.81% | 
-| avroCoreNoHydration | 135 | 7.35% | 502 | 22.15% | 
-| avroCoreWithHydration | 100 | 5.43% | 233 | 10.30% | 
-| jacksonAvro | 89 | 4.86% | 149 | 6.58% | 
-| jacksonJSON | 88 | 4.82% | 87 | 3.85% | 
+| avrodite | 1858 | 100.00% | 2208 | 100.00% | 
+| protocolBuffers | 585 | 31.47% | 589 | 26.67% | 
+| avroCoreNoHydration | 132 | 7.08% | 501 | 22.67% | 
+| avroCoreWithHydration | 102 | 5.48% | 239 | 10.82% | 
+| jacksonAvro | 87 | 4.68% | 158 | 7.14% | 
+| jacksonJSON | 88 | 4.74% | 89 | 4.02% | 
 
 
 ##### Heap Usage
@@ -55,10 +55,10 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 | Framework | T1 Heap Allocation Rate [ Byte/op ] | T1 relative perf. |T2 Heap Allocation Rate [ Byte/op ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
 | avrodite | 1024 | 100.00% | 1024 | 100.00% | 
-| avroCoreNoHydration | 2536 | 247.65% | 2248 | 219.53% | 
+| avroCoreNoHydration | 2248 | 219.53% | 2248 | 219.53% | 
 | avroCoreWithHydration | 4840 | 472.66% | 4840 | 472.66% | 
 | protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
-| jacksonJSON | 9512 | 928.91% | 9512 | 928.91% | 
+| jacksonJSON | 9472 | 925.01% | 9472 | 925.00% | 
 | jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
 
 #### Results Charts

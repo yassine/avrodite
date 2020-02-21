@@ -20,7 +20,7 @@ We run {{ context.tests.size() }} tests:
 
 {% endfor %}
 
-The tests classes are available under the 'avrodite-codec-avro-benchmarks' module.
+The tests classes are available under the 'avrodite-avro-benchmarks' module.
 
 #### Test Environment
 
@@ -36,7 +36,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 | Framework              | Version    |
 |------------------------|------------|
-| Avro Core              | 1.8.1      |
+| Avro Core              | 1.9.1      |
 | Avrodite               | 0.1.0      |
 | Jackson Avro           | 2.8.5      |
 | Jackson JSON           | 2.8.5      |

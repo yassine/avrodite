@@ -18,6 +18,7 @@ project(artifactId: 'avrodite-avro-benchmarks', version: '0.1.0-SNAPSHOT') {
     dependency('tech.tablesaw:tablesaw-jsplot:0.37.3:test')
     dependency('com.fasterxml.jackson.dataformat:jackson-dataformat-avro:2.8.5:test')
     dependency('com.google.protobuf:protobuf-java:3.11.3:test')
+    dependency('io.github.classgraph:classgraph') { scope 'test' }
     dependency('org.assertj:assertj-core')
     dependency('org.junit.jupiter:junit-jupiter')
     dependency('org.junit.vintage:junit-vintage-engine')
@@ -30,4 +31,26 @@ project(artifactId: 'avrodite-avro-benchmarks', version: '0.1.0-SNAPSHOT') {
     dependency('commons-io:commons-io:2.6:test')
   }
 
+  profiles {
+    profile(id: 'test.bench.report') {
+      build {
+        plugins {
+          plugin(groupId: 'org.codehaus.mojo', artifactId: 'exec-maven-plugin', version: '1.6.0') {
+            executions {
+              execution(id: 'bench-and-report', phase: 'post-integration-test', goals: 'java') {
+                configuration {
+                  mainClass 'org.avrodite.avro.BenchmarkReporter'
+                  includeProjectDependencies true
+                  classpathScope 'test'
+                  additionalClasspathElements {
+                    additionalClasspathElement '${project.build.directory}/bench-tests-classes'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

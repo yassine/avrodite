@@ -1,10 +1,8 @@
 package org.avrodite.avro;
 
 import static java.util.Objects.requireNonNull;
-import static org.avrodite.avro.ReportUtils.report;
 
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.io.DecoderFactory;
@@ -35,31 +33,22 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.VerboseMode;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Fork(value = 1, warmups = 0, jvmArgsPrepend = {"-server", "-Xms1G"})
-@Warmup(iterations = 1, time = 3)
-@Measurement(iterations = 4, time = 8)
+@Fork(value = 4, warmups = 0, jvmArgsPrepend = {"-server", "-Xms1G"})
+@Warmup(iterations = 1, time = 1)
+@Measurement(iterations = 4, time = 10)
 @BenchmarkMode(Mode.Throughput)
 @State(Scope.Benchmark)
 public class EquityEventBenchmark {
 
-  @Getter
-  static final String OUTPUT_FILE = "avrodite-pages/data/output.json";
-
   @SneakyThrows
-  public static void main(String[] args) {
-    new EquityEventBenchmark().run();
-    report(OUTPUT_FILE, "avrodite-pages");
-  }
-
-  @SneakyThrows
-  public void run() {
+  public void run(String outputFile, String... jvmArgs) {
     new Runner(
       new OptionsBuilder()
         .include(EquityEventBenchmark.class.getSimpleName())
         .resultFormat(ResultFormatType.JSON)
         .addProfiler(GCProfiler.class)
-        .result(OUTPUT_FILE)
-        .verbosity(VerboseMode.EXTRA)
+        .result(outputFile)
+        .verbosity(VerboseMode.NORMAL)
         .forks(1)
         .build()
     ).run();
@@ -75,7 +64,7 @@ public class EquityEventBenchmark {
     private ProtocolBuffersBenchmarkState protocolBuffers;
     private byte[] serializationData;
 
-    @Param( {"true", "false"})
+    @Param({ "true", "false" })
     boolean nullable;
 
     @Setup(Level.Trial)

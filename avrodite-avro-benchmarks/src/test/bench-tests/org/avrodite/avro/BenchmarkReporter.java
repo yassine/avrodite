@@ -5,10 +5,13 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
+import io.github.classgraph.ClassGraph;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import lombok.SneakyThrows;
@@ -22,10 +25,30 @@ import org.avrodite.fixtures.event.EquityMarketPriceEvent;
  * helps generate bench results docs from benchmarks output
  * --yassine
  */
-public class ReportUtils {
+public class BenchmarkReporter {
+
+  static final String OUTPUT_FILE = "avrodite-pages/data/output.json";
 
   @SneakyThrows
-  public static void report(String input, String outputDirPath){
+  public static void main(String[] args) {
+    String oldClasspathProperty = System.getProperty("java.class.path");
+    try {
+      String classPath = String.join(":",
+        new ClassGraph().getClasspathURIs().stream()
+          .map(URI::getPath)
+          .filter(path -> !path.contains("maven-slf4j-provider") && !path.contains("slf4j-jdk14"))
+          .toArray(String[]::new)
+      );
+      System.setProperty("java.class.path", classPath);
+      new EquityEventBenchmark().run(OUTPUT_FILE, "-cp", classPath);
+      report(OUTPUT_FILE, "avrodite-pages");
+    } finally {
+      System.setProperty("java.class.path", oldClasspathProperty);
+    }
+  }
+
+  @SneakyThrows
+  public static void report(String input, String outputDirPath) {
     BenchResultModel[] modelsArr = loadDoc(input);
     File outputDir = new File(outputDirPath);
     File imagesOutputDir = new File(outputDir, "images");
@@ -52,9 +75,14 @@ public class ReportUtils {
   }
 
   @SneakyThrows
-  private static String fixtureModel(){
+  private static String fixtureModel() {
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(EquityMarketPriceEvent.create());
+  }
+
+  @SneakyThrows
+  private static URL toURL(String path) {
+    return new File(path).toURI().toURL();
   }
 
 }
