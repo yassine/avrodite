@@ -9,10 +9,9 @@ project(artifactId: 'avrodite-avro-maven-plugin', version: '0.1.0-SNAPSHOT') {
     dependency('org.apache.maven:maven-core:3.6.3'){ exclusions('org.slf4j:slf4j-api', 'com.google.guava:guava') }
     dependency('org.apache.maven:maven-plugin-api:3.6.3'){ exclusions('org.slf4j:slf4j-api', 'com.google.guava:guava') }
     dependency('org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.0:provided')
-
+    dependency('ch.qos.logback:logback-classic')
     /* utilities */
     dependency('org.projectlombok:lombok')
-    dependency('io.github.classgraph:classgraph')
     dependency('com.machinezoo.noexception:noexception')
     /* testing */
     dependency('org.apache.maven.plugin-testing:maven-plugin-testing-harness:3.3.0:test')
