@@ -11,7 +11,7 @@ import org.avrodite.api.CodecStandardApi;
 @Accessors(fluent = true)
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class AvroStandard implements CodecStandard<AvroInputByteBuffer, AvroOutputByteBuffer, AvroCodec<?>, AvroValueCodec<?>> {
+public abstract class AvroStandard implements CodecStandard<AvroInputByteBuffer, AvroOutputByteBuffer, AvroCodec<?>, AvroValueCodec<?>> {
 
   public static final String JAVA_TYPE_SCHEMA_PROP = "org.avrodite.avro.javaType";
   private static final String AVRO_NAME = "AVRO";

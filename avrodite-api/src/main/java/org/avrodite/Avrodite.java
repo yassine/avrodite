@@ -107,17 +107,11 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
         .ifPresent(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
     }
 
-    @SuppressWarnings( {"unchecked", "rawtypes"})
     private Type getCodecTarget(Class<?> clazz) {
       return ofNullable(resolve(clazz).type(Codec.class).genericTypes())
         .filter(generics -> !generics.isEmpty())
         .map(generics -> generics.get(0))
         .orElse(Object.class);
-    }
-
-    @SneakyThrows
-    Class<?> classForName(String name) {
-      return Class.forName(name);
     }
 
     @SneakyThrows
