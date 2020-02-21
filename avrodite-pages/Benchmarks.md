@@ -31,7 +31,7 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 
 | Framework              | Version    |
 |------------------------|------------|
-| Avro Core              | 1.8.1      |
+| Avro Core              | 1.9.1      |
 | Avrodite               | 0.1.0      |
 | Jackson Avro           | 2.8.5      |
 | Jackson JSON           | 2.8.5      |
@@ -42,12 +42,12 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 ##### Throughput
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1854 | 100.00% | 2215 | 100.00% | 
-| protocolBuffers | 582 | 31.41% | 590 | 26.64% | 
-| avroCoreNoHydration | 109 | 5.89% | 510 | 23.04% | 
-| avroCoreWithHydration | 94 | 5.06% | 251 | 11.32% | 
-| jacksonAvro | 88 | 4.77% | 146 | 6.61% | 
-| jacksonJSON | 89 | 4.78% | 87 | 3.92% | 
+| avrodite | 1832 | 100.00% | 2265 | 100.00% | 
+| protocolBuffers | 584 | 31.88% | 630 | 27.81% | 
+| avroCoreNoHydration | 135 | 7.35% | 502 | 22.15% | 
+| avroCoreWithHydration | 100 | 5.43% | 233 | 10.30% | 
+| jacksonAvro | 89 | 4.86% | 149 | 6.58% | 
+| jacksonJSON | 88 | 4.82% | 87 | 3.85% | 
 
 
 ##### Heap Usage
@@ -55,10 +55,10 @@ The tests classes are available under the 'avrodite-codec-avro-benchmarks' modul
 | Framework | T1 Heap Allocation Rate [ Byte/op ] | T1 relative perf. |T2 Heap Allocation Rate [ Byte/op ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
 | avrodite | 1024 | 100.00% | 1024 | 100.00% | 
-| avroCoreNoHydration | 2248 | 219.53% | 2248 | 219.53% | 
+| avroCoreNoHydration | 2536 | 247.65% | 2248 | 219.53% | 
 | avroCoreWithHydration | 4840 | 472.66% | 4840 | 472.66% | 
 | protocolBuffers | 6088 | 594.53% | 6088 | 594.53% | 
-| jacksonJSON | 9472 | 925.00% | 9472 | 925.00% | 
+| jacksonJSON | 9512 | 928.91% | 9512 | 928.91% | 
 | jacksonAvro | 16264 | 1588.28% | 16296 | 1591.41% | 
 
 #### Results Charts
