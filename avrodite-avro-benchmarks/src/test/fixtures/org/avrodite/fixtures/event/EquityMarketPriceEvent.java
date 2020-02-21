@@ -24,7 +24,7 @@ public class EquityMarketPriceEvent extends AbstractEvent<EventMeta, Equity> {
     meta.setCorrelation("dadebd6e-dc8d-4da1-9682-9f2b02760bd2");
     meta.setId("2a49ab61-20dd-4e38-88b3-c095cd025c78");
     meta.setParentId("c3656b06-065d-481a-95fc-22cad705551e");
-    equity.setPrice(124.214);
+    equity.setPrice(price);
     equity.setTicker("TICKER");
     equity.setVolume(125855214L);
     equity.setVariation(-0.0112);
