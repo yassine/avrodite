@@ -25,6 +25,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
     'version.logging.logback' '1.2.3'
     'version.testing.jmh' '1.23'
     'version.testing.junit' '5.5.2'
+    'version.testing.spock' '2.0-M2-groovy-3.0'
     'version.utilities.auto.service' '1.0-rc6'
     'version.utilities.classgraph' '4.8.53'
     'version.utilities.lombok' '1.18.12'
@@ -36,10 +37,10 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
   dependencyManagement {
     dependencies {
       /* intra modules dependencies */
-      dependency('org.avrodite:avrodite-api:0.1.0-SNAPSHOT')
-      dependency('org.avrodite:avrodite-avro:0.1.0-SNAPSHOT')
-      dependency('org.avrodite:avrodite-tools:0.1.0-SNAPSHOT')
-      dependency('org.avrodite:avrodite-tools-avro:0.1.0-SNAPSHOT')
+      dependency('org.avrodite:avrodite-api:${version.project}')
+      dependency('org.avrodite:avrodite-avro:${version.project}')
+      dependency('org.avrodite:avrodite-tools:${version.project}')
+      dependency('org.avrodite:avrodite-tools-avro:${version.project}')
       /* annotation processors */
       dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
       dependency('org.projectlombok:lombok:${version.utilities.lombok}:provided')
@@ -59,7 +60,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       dependency('org.assertj:assertj-core:3.15.0:test')
       dependency('org.openjdk.jmh:jmh-core:${version.testing.jmh}:test')
       dependency('org.openjdk.jmh:jmh-generator-annprocess:${version.testing.jmh}:test')
-      dependency('org.spockframework:spock-core:1.3-groovy-2.5:test')
+      dependency('org.spockframework:spock-core:${version.testing.spock}:test')
     }
   }
 
@@ -90,7 +91,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       }
       plugin(groupId: 'org.codehaus.gmavenplus', artifactId: 'gmavenplus-plugin', version: '${version.build.gmaven}') {
         dependencies {
-          dependency('org.codehaus.groovy:groovy-all:2.5.4') { type 'pom' }
+          dependency('org.codehaus.groovy:groovy-all:3.0.1') { type 'pom' }
         }
       }
     }
