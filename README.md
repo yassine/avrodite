@@ -75,12 +75,12 @@ Refer to this [document](./avrodite-pages/Benchmarks.md) for detailed results.
 
 | Framework | T1 throughput [ ops/ms ] | T1 relative perf. |T2 throughput [ ops/ms ] | T2 relative perf. |
 |-----------|------------|--------------|------------|--------------|
-| avrodite | 1854 | 100.00% | 2215 | 100.00% | 
-| protocolBuffers | 582 | 31.41% | 590 | 26.64% | 
-| avroCoreNoHydration | 109 | 5.89% | 510 | 23.04% | 
-| avroCoreWithHydration | 94 | 5.06% | 251 | 11.32% | 
-| jacksonAvro | 88 | 4.77% | 146 | 6.61% | 
-| jacksonJSON | 89 | 4.78% | 87 | 3.92% | 
+| avrodite | 1832 | 100.00% | 2265 | 100.00% | 
+| protocolBuffers | 584 | 31.88% | 630 | 27.81% | 
+| avroCoreNoHydration | 135 | 7.35% | 502 | 22.15% | 
+| avroCoreWithHydration | 100 | 5.43% | 233 | 10.30% | 
+| jacksonAvro | 89 | 4.86% | 149 | 6.58% | 
+| jacksonJSON | 88 | 4.82% | 87 | 3.85% | 
 
 ![Alt text](./avrodite-pages/images/T1.thrpt.png?raw=true "Throughput")
 
