@@ -4,8 +4,8 @@ project(artifactId: 'avrodite-tools-avro', version: '0.1.0-SNAPSHOT') {
 
   dependencies {
     dependency('org.avrodite:avrodite-api')
+    dependency('org.avrodite:avrodite-avro')
     dependency('org.avrodite:avrodite-tools')
-    dependency('org.avrodite:avrodite-codec-avro')
     dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
     dependency('org.apache.avro:avro:1.8.1') { exclusions('org.slf4j:slf4j-api') }
     /* utilities */

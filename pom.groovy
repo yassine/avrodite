@@ -4,8 +4,8 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
   packaging 'pom'
   modules {
     module 'avrodite-api'
-    module 'avrodite-codec-avro'
-    module 'avrodite-codec-avro-benchmarks'
+    module 'avrodite-avro'
+    module 'avrodite-avro-benchmarks'
     module 'avrodite-tools'
     module 'avrodite-tools-avro'
     module 'avrodite-avro-maven-plugin'
@@ -37,9 +37,10 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
     dependencies {
       /* intra modules dependencies */
       dependency('org.avrodite:avrodite-api:0.1.0-SNAPSHOT')
+      dependency('org.avrodite:avrodite-avro:0.1.0-SNAPSHOT')
       dependency('org.avrodite:avrodite-tools:0.1.0-SNAPSHOT')
       dependency('org.avrodite:avrodite-tools-avro:0.1.0-SNAPSHOT')
-      dependency('org.avrodite:avrodite-codec-avro:0.1.0-SNAPSHOT')
+
       dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
       /* java core language utilities */
       dependency('com.machinezoo.noexception:noexception:${version.utilities.no-exception}') { exclusions('org.slf4j:slf4j-api') }

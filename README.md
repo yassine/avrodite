@@ -33,7 +33,6 @@ Regarding usability, the interaction with Avrodite API would consist of somethin
 ```java
 //API configuration would happen in your dependency injection layer 
 Avrodite<AvroStandard, AvroCodec<?>> avrodite = AvroStandardV19.avrodite()
-                                                      .discoverCodecsAt(yourAPIPackage)
                                                       .build();                                                               
 //once you catch an avrodite instance you can get a codec for a given target as follows:
 AvroCodec<Model> codec = avrodite.getCodec(Model.class);
@@ -53,15 +52,15 @@ formats in the future (JSON for example). Currently the modules consists of :
 
 1. `avrodite-api`: The global API that projects would depends on for 
 serialization/deserialization.
-2. `avrodite-codec-avro`: An extension of the public API that provides AVRO 
-custom API (access to Schema instances for example).
+2. `avrodite-avro`: An extension and implementation of the public API that provides AVRO 
+custom API (api access to Schema instances for example).
 3. `avrodite-tools`: Mainly a compile-time/build phase dependency that contains the 
 necessary logic for introspecting your beans and plain objects API. 
 4. `avrodite-tools-avro`: An `avrodite-tools` plugin that generate custom classes for the AVRO binary 
 format.
 5. `avrodite-avro-maven-plugin`: A maven plugin that abstracts away from you the `avrodite-tools` 
 stack to generate your codecs classes during the build phase.
-6. `avrodite-codec-avro-benchmarks`: A test module that benchmarks the AVRO implementation against 
+6. `avrodite-avro-benchmarks`: A test module that benchmarks the AVRO implementation against 
 other libraries.
 
 
