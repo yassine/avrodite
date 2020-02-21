@@ -79,6 +79,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
       return this;
     }
 
+    @SuppressWarnings("unchecked")
     public Avrodite<S, C> build() {
       HashMap<Type, C> codecIndex = new HashMap<>();
       Avrodite<S, C> avrodite = new Avrodite<>(standard);
