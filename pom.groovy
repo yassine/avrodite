@@ -109,7 +109,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
             executions {
               execution(id: 'prepare-agent', phase: 'test-compile', goals: 'prepare-agent') {
                 configuration {
-                  destFile '${project.build.directory}/jacoco-ut-${project.artifactId}.exec'
+                  destFile '${project.parent.basedir}/avrodite-pages/target/jacoco-ut-${project.artifactId}.exec'
                   propertyName 'surefireArgLine'
                 }
               }

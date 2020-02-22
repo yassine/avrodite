@@ -2,7 +2,9 @@ project(artifactId: 'avrodite-avro-maven-plugin', version: '0.1.0-SNAPSHOT') {
   modelVersion '4.0.0'
   packaging 'maven-plugin'
   parent(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-SNAPSHOT', relativePath: '../pom.groovy'){}
-
+  properties {
+    'sonar.skip' 'true'
+  }
   dependencies {
     dependency('org.avrodite:avrodite-tools-avro:0.1.0-SNAPSHOT')
     dependency('com.google.guava:guava:28.2-jre')
