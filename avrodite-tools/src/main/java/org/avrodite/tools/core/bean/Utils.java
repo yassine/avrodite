@@ -4,6 +4,7 @@ import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isInterface;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 import static org.avrodite.tools.core.utils.TypeUtils.typeToRawClass;
 import static ru.vyarus.java.generics.resolver.GenericsResolver.resolve;
 
@@ -21,8 +22,10 @@ import ru.vyarus.java.generics.resolver.context.GenericsContext;
 @UtilityClass
 public class Utils {
 
-  public static final List<Class<?>> NUMERIC_TYPES = asList(double.class, Double.class, float.class, Float.class, long.class, Long.class, short.class, Short.class, int.class, Integer.class, boolean.class, Boolean.class);
-  public static final List<Class<?>> DATASTRUCTURES_TYPES = asList(List.class, Set.class, Queue.class, Iterable.class, Collection.class);
+  public static final List<Class<?>> NUMERIC_TYPES =
+    unmodifiableList(asList(double.class, Double.class, float.class, Float.class, long.class, Long.class, short.class, Short.class, int.class, Integer.class, boolean.class, Boolean.class));
+  public static final List<Class<?>> DATA_STRUCTURES_TYPES =
+    unmodifiableList(asList(List.class, Set.class, Queue.class, Iterable.class, Collection.class));
   public static final List<Class<?>> OTHER_PRIMITIVE_TYPES = singletonList(String.class);
 
   static boolean isOfInterest(FieldInfo field, Set<String> whitelist, Set<Class<?>> exclusions) {
@@ -66,7 +69,7 @@ public class Utils {
   }
 
   static boolean isOfActualTypeInterest(Class<?> actualClass, Set<String> whitelist, Set<Class<?>> exclusions) {
-    if (DATASTRUCTURES_TYPES.stream().anyMatch(actualClass::equals)) {
+    if (DATA_STRUCTURES_TYPES.stream().anyMatch(actualClass::equals)) {
       return true;
     } else if (actualClass.isArray()) {
       return true;

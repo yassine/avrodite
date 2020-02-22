@@ -2,7 +2,6 @@ package org.avrodite.avro.result;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

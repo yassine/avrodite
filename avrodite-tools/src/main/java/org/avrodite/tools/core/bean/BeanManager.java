@@ -49,7 +49,7 @@ public class BeanManager {
     return new Builder<>(standard);
   }
 
-  public static Builder<?> builder() {
+  public static <T extends CodecStandard<?, ?, ?, ?>> Builder<T> builder() {
     return new Builder<>(null);
   }
 

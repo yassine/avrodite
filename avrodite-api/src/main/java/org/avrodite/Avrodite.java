@@ -2,7 +2,6 @@ package org.avrodite;
 
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isInterface;
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -65,14 +64,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
     private final S standard;
 
-    private final Set<Package> includedPackages = new HashSet<>();
     private final Set<Class<?>> userCodecs = new HashSet<>();
-
-    @Deprecated
-    public AvroditeBuilder<S, C> discoverCodecsAt(Package... pkgs) {
-      includedPackages.addAll(asList(pkgs));
-      return this;
-    }
 
     public AvroditeBuilder<S, C> include(List<Class<?>> codecs) {
       userCodecs.addAll(codecs);

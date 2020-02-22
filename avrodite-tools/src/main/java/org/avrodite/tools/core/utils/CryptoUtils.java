@@ -2,7 +2,6 @@ package org.avrodite.tools.core.utils;
 
 import static java.lang.String.format;
 
-import com.machinezoo.noexception.Exceptions;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,10 +24,6 @@ public class CryptoUtils {
     '+', '/'
   };
 
-  private static final ThreadLocal<MessageDigest> DIGEST = ThreadLocal.withInitial(() ->
-    Exceptions.sneak().get(() -> MessageDigest.getInstance("SHA-256"))
-  );
-
   public static char[] randomBase64(int multiplier) {
     ThreadLocalRandom random = ThreadLocalRandom.current();
     char[] data = new char[multiplier * MAX];
@@ -46,9 +41,9 @@ public class CryptoUtils {
   }
 
   @SneakyThrows
-  @SuppressWarnings("CheckStyle")
   public static String hashSHA256(String originalString) {
-    return bytesToHex(DIGEST.get().digest(originalString.getBytes(StandardCharsets.UTF_8)));
+    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    return bytesToHex(digest.digest(originalString.getBytes(StandardCharsets.UTF_8)));
   }
 
   private static String bytesToHex(byte[] hash) {

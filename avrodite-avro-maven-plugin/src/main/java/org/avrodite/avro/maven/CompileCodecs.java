@@ -71,16 +71,20 @@ public class CompileCodecs extends AbstractMojo {
         services.addAll(Files.readAllLines(spiFile.toPath()));
       }
       compilations.forEach(compilation -> services.add(compilation.name()));
-      try (BufferedWriter writer = Files.newBufferedWriter(spiFile.toPath())) {
-        services.forEach(service -> {
-          Exceptions.sneak().run(() -> {
-            writer.write(service);
-            writer.newLine();
-          });
-        });
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-      }
+      writeServices(spiFile, services);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  private void writeServices(File spiFile, Set<String> services){
+    try (BufferedWriter writer = Files.newBufferedWriter(spiFile.toPath())) {
+      services.forEach(service ->
+        Exceptions.sneak().run(() -> {
+          writer.write(service);
+          writer.newLine();
+        })
+      );
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }

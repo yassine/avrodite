@@ -78,9 +78,7 @@ class EventSpec extends Specification {
 
   def setup() {
 
-    AvroStandardV19.avrodite()
-      .discoverCodecsAt()
-      .build();
+    AvroStandardV19.avrodite().build();
     AVRO_CODEC_MANAGER = Avrodite.builder(AvroStandardV19.AVRO_1_9)
       .include(
         AvroditeTools.compiler(AvroStandardV19.AVRO_1_9)
