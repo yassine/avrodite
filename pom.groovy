@@ -285,7 +285,9 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
               }
             }
           }
-          plugin(groupId: 'org.codehaus.mojo', artifactId: 'sonar-maven-plugin', version: '3.7.0.1746')
+          plugin(groupId: 'org.codehaus.mojo', artifactId: 'sonar-maven-plugin', version: '3.7.0.1746'){
+
+          }
         }
       }
     }
