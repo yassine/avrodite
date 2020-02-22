@@ -6,7 +6,7 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-
+sonar-dev.properties
 .idea/
 .idea/**
 *.iml

@@ -9,6 +9,7 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
     module 'avrodite-tools'
     module 'avrodite-tools-avro'
     module 'avrodite-avro-maven-plugin'
+    module 'avrodite-pages'
   }
 
   properties {
@@ -99,22 +100,17 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
 
   profiles {
     profile(id: 'test.coverage') {
+      activation {
+        property(name: 'test.profile', value: 'ci')
+      }
       build {
         plugins {
           plugin(groupId: 'org.jacoco', artifactId: 'jacoco-maven-plugin', version: '${version.build.jacoco}') {
             executions {
               execution(id: 'prepare-agent', phase: 'test-compile', goals: 'prepare-agent') {
                 configuration {
-                  destFile '${project.build.directory}/coverage-reports/jacoco-ut.exec'
+                  destFile '${project.build.directory}/jacoco-ut-${project.artifactId}.exec'
                   propertyName 'surefireArgLine'
-                }
-              }
-              execution(id: 'post-test-reports', phase: 'post-integration-test', goals: 'report') {
-                configuration {
-                  dataFile '${project.build.directory}/coverage-reports/jacoco-ut.exec'
-                  outputDirectory '${project.reporting.outputDirectory}/code-coverage'
-                  //exclude jboss-logging generated classes
-                  excludes('**/*_$bundle.*')
                 }
               }
             }
@@ -267,6 +263,56 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       }
       dependencies {
         dependency('com.sun:tools:${maven.compiler.source}:system') { systemPath '${java.home}/lib/tools.jar' }
+      }
+    }
+    profile(id: 'ci.sonar') {
+      activation {
+        property(name: 'test.profile', value: 'ci')
+      }
+      build {
+        plugins {
+          //load sonar ci config
+          plugin(groupId: 'org.codehaus.mojo', artifactId: 'properties-maven-plugin', version: '1.0.0') {
+            executions {
+              execution(id: 'sonar-read-properties-ci', phase: 'initialize', goals: 'read-project-properties') {
+                inherited false
+                configuration {
+                  quiet 'false'
+                  files {
+                    file '${project.basedir}/sonar-ci.properties'
+                  }
+                }
+              }
+            }
+          }
+          plugin(groupId: 'org.codehaus.mojo', artifactId: 'sonar-maven-plugin', version: '3.4.0.905'){
+            executions {
+              execution(phase: 'verify', goals: 'sonar') {
+                inherited false
+              }
+            }
+          }
+        }
+      }
+    }
+    profile(id: 'dev.local') {
+      build {
+        plugins {
+          //load local sonar config overrides
+          plugin(groupId: 'org.codehaus.mojo', artifactId: 'properties-maven-plugin', version: '1.0.0') {
+            executions {
+              execution(id: 'sonar-read-properties-local-dev', phase: 'initialize', goals: 'read-project-properties') {
+                inherited false
+                configuration {
+                  quiet 'false'
+                  files {
+                    file '${project.basedir}/sonar-dev.properties'
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
