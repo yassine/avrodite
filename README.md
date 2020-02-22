@@ -1,4 +1,6 @@
 ## Avrodite ![image alt >](./avrodite-pages/images/avrodite.png?raw=true) 
+![Build Status](https://www.travis-ci.org/yassine/avrodite.png?branch=master) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=yassine_avrodite&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=yassine_avrodite) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=yassine_avrodite&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=yassine_avrodite) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=yassine_avrodite&metric=security_rating)](https://sonarcloud.io/dashboard?id=yassine_avrodite)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=yassine_avrodite&metric=coverage)](https://sonarcloud.io/dashboard?id=yassine_avrodite) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=yassine_avrodite&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=yassine_avrodite) 
+
 A fast, lightweight, POJO driven, Apache Avro serialization/deserialization library.
 
 #### Motivation
