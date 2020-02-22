@@ -1,0 +1,19 @@
+sudo: required
+dist: trusty
+language: java
+jdk:
+  - openjdk8
+jobs:
+  include:
+    - stage: test
+      script:
+        - mvn clean
+        - mvn -Dtest.profile=ci -Ptest.coverage post-integration-test sonar:sonar
+stages:
+  - test
+sonarcloud:
+  organization: yassine-github
+  token:
+    secure: "wfdK3xLnr+DaZ/PtFhZGQ0/BKwszPmt37QqMtOBps2Tcr8Ei/RRA5syijFgYzC7FzK8m+2KXkIwWWVES2FLu4xFbVbK2RlawGM/n4QnoLBx3z+VFqKtVSn0PJrzFTTVvQqWZBfelMrqxsoVxfHFDzb8SKe1gVxv/j+G/j9iiPf54ZIDjzefzNmWmWUwIOC7VjxiXWLXQDCeIgqgwjz+RA3PF12BrYLXKEXfp5wGWreLdR+WmZzp7PH88T7NN0JDbwjUBR4hUD0pUMDXxn2LBFNVPuIqNJtppI4EBJ56IMJDu1xOq7X9jlD292Zrs3YdEwbFsQBYxSP3o0okeVbU/49X9jQMBDLobc7PE2a813P6WMlwOUP+T4HGzjSB1hOAvw0eWep7sUNNxUFJtvhOHKJHB8hxowYW6uQYWgKAyhL7Vow5VCtJY/WOhNb2+mWkzOAbpftLxsXqMCag4l07awvaoKYaEKHs8ms67byGua/5jAB/ArMZvSSe+6v9V8ekh7si+MhJNRjrQW27xPnvIDlmUcg9EIY/yvvh5dUlMXEQCTiqqfL14Wrsj6yEjr9zXbfpxvCq1v5od+7yxpQKZV/eleqHHTC9GgGZZf0QCWiEuWK5P2GYokkpcSsEBD+gOuGTGD3+f391QhPZmOU4cwJEL0wvwLtwsCKBA/WCCjJg="
+notifications:
+  email: false
