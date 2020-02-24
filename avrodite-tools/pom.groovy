@@ -5,7 +5,6 @@ project(artifactId: 'avrodite-tools', version: '0.1.0-SNAPSHOT') {
   dependencies {
     dependency('org.avrodite:avrodite-api')
     dependency('io.pebbletemplates:pebble:3.1.0') { exclusions('org.slf4j:slf4j-api') }
-    dependency('org.jgrapht:jgrapht-core:1.3.1')
     /* utilities */
     dependency('com.machinezoo.noexception:noexception')
     dependency('org.projectlombok:lombok')

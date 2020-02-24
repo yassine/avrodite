@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static lombok.AccessLevel.PRIVATE;
-import static org.avrodite.tools.core.bean.DiscoveryUtils.getTypeSequence;
+import static org.avrodite.tools.core.bean.DiscoveryUtils.discoverTypes;
 import static org.avrodite.tools.core.bean.Utils.isOfInterest;
 import static org.avrodite.tools.core.utils.ReflectionUtils.getFields;
 import static org.avrodite.tools.core.utils.ScanUtils.classPathScannerWith;
@@ -23,7 +23,6 @@ import io.github.classgraph.ScanResult;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
@@ -41,7 +40,7 @@ import org.avrodite.tools.core.utils.ReflectionUtils;
 public class BeanManager {
 
   private final Set<Class<?>> targets;
-  private final List<BeanInfo> beans;
+  private final Set<BeanInfo> beans;
   private final Map<String, BeanInfo> beansIndex;
   private final Map<Class<?>, ? extends ValueCodec<?, ?, ?, ?>> valueCodecsIndex;
 
@@ -109,14 +108,14 @@ public class BeanManager {
         .filter(clazz -> excludeClasses.stream().noneMatch(clazz::equals))
         .collect(toSet());
 
-      List<BeanInfo> beans = getBeanInfo(getTypeSequence(targets, includePackages, excludeClasses), valueCodecIndex);
+      Set<BeanInfo> beans = getBeanInfo(discoverTypes(targets, includePackages, excludeClasses), valueCodecIndex);
       return Exceptions.log(BeanManager.log).get(() -> {
         Map<String, BeanInfo> beanInfos = beans.stream().collect(toMap(BeanInfo::getSignature, identity()));
         return new BeanManager(targets, beans, beanInfos, unmodifiableMap(valueCodecIndex));
       }).orElse(null);
     }
 
-    List<BeanInfo> getBeanInfo(List<TypeInfo> types, Map<Class<?>, ValueCodec<?, ?, ?, ?>> valueCodecIndex) {
+    Set<BeanInfo> getBeanInfo(Set<TypeInfo> types, Map<Class<?>, ValueCodec<?, ?, ?, ?>> valueCodecIndex) {
       return types.stream()
         .map(type -> BeanInfo.builder()
           .fields(
@@ -142,7 +141,7 @@ public class BeanManager {
           .targetRaw(type.rawType())
           .signature(type.signature())
           .build()
-        ).collect(toList());
+        ).collect(toSet());
     }
 
   }

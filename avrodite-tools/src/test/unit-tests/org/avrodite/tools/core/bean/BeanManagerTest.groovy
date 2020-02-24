@@ -1,7 +1,11 @@
 package org.avrodite.tools.core.bean
 
+import org.avrodite.fixtures.cyclic.BeanA
+import org.avrodite.fixtures.cyclic.BeanB
 import org.avrodite.fixtures.discovery.AbstractDiscoveryTestRoot
 import spock.lang.Specification
+
+import static java.util.stream.Collectors.toSet
 
 class BeanManagerTest extends Specification {
 
@@ -26,4 +30,17 @@ class BeanManagerTest extends Specification {
       "org.avrodite.fixtures.discovery.ModelF"
     ] as Set
   }
+
+  def "cyclic dependencies are correctly discovered"() {
+    given:
+    def cyclicBeanManager = BeanManager.builder()
+      .includePackages(BeanA.class.package.name)
+      .build()
+
+    expect:
+    cyclicBeanManager.beansIndex().values().stream()
+      .map({it.targetRaw})
+      .collect(toSet()) == [BeanA.class, BeanB.class] as Set
+  }
+
 }

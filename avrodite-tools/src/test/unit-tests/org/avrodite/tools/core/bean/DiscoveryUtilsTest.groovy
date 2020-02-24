@@ -7,7 +7,7 @@ import spock.lang.Specification
 import java.lang.reflect.Modifier
 import java.util.stream.Collectors
 
-import static org.avrodite.tools.core.bean.DiscoveryUtils.getTypeSequence
+import static org.avrodite.tools.core.bean.DiscoveryUtils.discoverTypes
 
 class DiscoveryUtilsTest extends Specification {
 
@@ -20,7 +20,7 @@ class DiscoveryUtilsTest extends Specification {
       .map({ Class.forName(it.name) })
       .collect(Collectors.toSet())
 
-    def result = getTypeSequence(set, Collections.singleton(EquityMarketPriceEvent.class.package.name), new HashSet<>())
+    def result = discoverTypes(set, Collections.singleton(EquityMarketPriceEvent.class.package.name), new HashSet<>())
       .stream()
       .map({ it.signature() })
       .collect(Collectors.toSet())
