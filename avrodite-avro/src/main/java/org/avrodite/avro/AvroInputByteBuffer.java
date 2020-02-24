@@ -35,14 +35,13 @@ public class AvroInputByteBuffer implements InputByteBuffer {
     byte current;
     int shift = 0;
     do {
-      current = data[position];
+      current = data[position++];
       result |= (current & 0x7F) << shift;
       if ( (current & 0x80) == 0 ) {
-        cursor = position + 1;
+        cursor = position;
         return (result >>> 1) ^ -(result & 1);
       }
       shift += 7;
-      position++;
     } while (shift < 32);
     throw AvroCodecException.API.unexpectedNumber();
   }
@@ -55,25 +54,23 @@ public class AvroInputByteBuffer implements InputByteBuffer {
     byte current;
     int shift = 0;
     do {
-      current = data[position];
+      current = data[position++];
       result |= (current & 0x7F) << shift;
       if ((current & 0x80) == 0) {
-        cursor = position + 1;
+        cursor = position;
         return (result >>> 1) ^ -(result & 1);
       }
       shift += 7;
-      position++;
     } while (shift < 25);
     //need to cast to long
     do {
-      current = data[position];
+      current = data[position++];
       result |= ((long) (current & 0x7F)) << shift;
       if ((current & 0x80) == 0) {
-        cursor = position + 1;
+        cursor = position;
         return (result >>> 1) ^ -(result & 1);
       }
       shift += 7;
-      position++;
     } while (shift < 64);
     throw AvroCodecException.API.unexpectedNumber();
   }
