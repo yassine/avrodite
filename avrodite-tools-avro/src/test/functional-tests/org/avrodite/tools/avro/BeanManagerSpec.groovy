@@ -10,7 +10,7 @@ import spock.lang.Specification
 import java.lang.reflect.Field
 import java.lang.reflect.Type
 
-class BeanManagerTest extends Specification {
+class BeanManagerSpec extends Specification {
 
   def "schema creation for cyclic type"() {
     given:

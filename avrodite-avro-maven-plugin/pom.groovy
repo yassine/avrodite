@@ -25,6 +25,10 @@ project(artifactId: 'avrodite-avro-maven-plugin', version: '0.1.0-SNAPSHOT') {
 
   profiles {
     profile(id: 'test.functional'){
+      activation {
+        property(name: 'test.profile', value: 'all')
+        property(name: 'test.profile', value: 'ci')
+      }
       build {
         plugins {
           plugin(groupId: 'org.apache.maven.plugins', artifactId: 'maven-invoker-plugin', version: '3.2.1'){

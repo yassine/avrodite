@@ -79,7 +79,7 @@ public class SchemaUtils {
       case ARRAY:
         return schemaBuilder.array().items(defineSchema(base, fingerprints, beanInfo, fieldInfo, offset + 1, beanManager, definedTypes, registry));
       case MAP:
-        return schemaBuilder.map().values().type(base.nullable().type(defineSchema(base, fingerprints, beanInfo, fieldInfo, offset + 1, beanManager, definedTypes, registry)));
+        return schemaBuilder.map().values().type(base.type(defineSchema(base, fingerprints, beanInfo, fieldInfo, offset + 1, beanManager, definedTypes, registry)));
       case SHORT:
       case INT:
         return schemaBuilder.intType();

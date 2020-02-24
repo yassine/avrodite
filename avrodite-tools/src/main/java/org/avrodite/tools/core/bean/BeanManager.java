@@ -21,6 +21,7 @@ import com.machinezoo.noexception.Exceptions;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
@@ -87,15 +88,20 @@ public class BeanManager {
       Map<Class<?>, ValueCodec<?, ?, ?, ?>> valueCodecIndex = scanResult
         .getClassesImplementing(ValueCodec.class.getName())
         .stream()
+        .filter(classInfo -> standard != null)
         .map(ClassInfo::getName)
         .map(ReflectionUtils::forName)
+        .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+        .filter(clazz -> !clazz.isInterface())
         .filter(clazz -> excludeClasses.stream().noneMatch(clazz::equals))
         .filter(clazz -> getValueCodecValueType(clazz) != null)
         .filter(ReflectionUtils::hasNoArgsConstructor)
         .map(ReflectionUtils::<Class<? extends ValueCodec<?, ?, ?, ?>>>castTo)
-        .filter(clazz -> ofNullable(standard).map(s -> standard.api().valueCodecApi().isAssignableFrom(clazz)).orElse(true))
+        .filter(clazz -> standard.api().valueCodecApi().isAssignableFrom(clazz))
         .map(ReflectionUtils::<ValueCodec<?, ?, ?, ?>>instantiate)
-        .collect(toMap(codec -> getValueCodecValueType(codec.getClass()), identity()));
+        .filter(valueCodec -> valueCodec.standard().name().equals(standard.name())
+                                && valueCodec.standard().version().equals(standard.version()))
+        .collect(toMap(codec -> getValueCodecValueType(codec.getClass()), v -> (ValueCodec<?, ?, ?, ?>) v));
 
       Set<Class<?>> targets = scanResult
         .getAllClasses()
@@ -132,8 +138,8 @@ public class BeanManager {
                   )
                 ).build())
               .filter(field -> valueCodecIndex.keySet().stream()
-                                .anyMatch(v -> v.isAssignableFrom(field.getTargetTypeInfo().rawType()))
-                              || isOfInterest(field, includePackages, excludeClasses))
+                .anyMatch(v -> v.isAssignableFrom(field.getTargetTypeInfo().rawType()))
+                || isOfInterest(field, includePackages, excludeClasses))
               .filter(Utils::isFieldInfoTargetTypeOfInterest)
               .collect(toList())
           )
@@ -148,7 +154,7 @@ public class BeanManager {
 
   private static Class<?> getValueCodecValueType(Class<?> clazz) {
     return ofNullable(resolve(clazz).type(ValueCodec.class).generics())
-      .filter(generics -> generics.size() == 1)
+      .filter(generics -> !generics.isEmpty())
       .map(generics -> generics.get(0))
       .orElse(null);
   }

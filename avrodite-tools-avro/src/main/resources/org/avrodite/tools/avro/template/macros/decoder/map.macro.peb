@@ -12,13 +12,8 @@
       int nullable = 0;
       for(int {{ index_ref }} = 0; {{ index_ref }} < {{ c_ref }}; {{ index_ref }}++){
         key = buffer.readString();
-        nullable = buffer.readInt();
-        if(nullable == 0){
-          {{ decode_field(context, field, depth + 1, item_ref) }}
-          {{ reference }}.put(key, {{ item_ref }});
-        }else if(nullable != 1) {
-          throw AvroCodecException.API.unexpectedInput(2, nullable);
-        }
+        {{ decode_field(context, field, depth + 1, item_ref) }}
+        {{ reference }}.put(key, {{ item_ref }});
       }
       {{ c_ref }} = buffer.readLong();
       if ({{ c_ref }} != 0) {

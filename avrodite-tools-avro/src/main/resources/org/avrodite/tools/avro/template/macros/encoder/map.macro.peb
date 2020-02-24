@@ -6,12 +6,9 @@
     buffer.writeLong({{ reference }}.size());
     {{ field.signatures[depth] }} {{ item_ref }};
     for(java.util.Map.Entry<String, {{ field.signatures[depth] }}> entry : {{ reference }}.entrySet()){
-      buffer.writeString(entry.getKey());
       {{ item_ref }} = entry.getValue();
-      if({{ item_ref }} == null){
-        buffer.writeByte((byte) 2);
-      }else{
-        buffer.writeByte((byte) 0);
+      if({{ item_ref }} != null){
+        buffer.writeString(entry.getKey());
         {{ encode_field(templateContext, field, depth + 1, item_ref) }};
       }
     }
