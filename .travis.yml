@@ -7,7 +7,6 @@ jobs:
   include:
     - stage: test
       script:
-        - mvn clean
         - mvn -Dtest.profile=ci -Ptest.coverage -e post-integration-test sonar:sonar
 stages:
   - test

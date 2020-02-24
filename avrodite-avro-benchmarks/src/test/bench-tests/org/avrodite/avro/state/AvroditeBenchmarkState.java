@@ -32,7 +32,7 @@ public class AvroditeBenchmarkState {
         .map(Compilation::define)
         .collect(toList())
       ).build();
-    avroditeCodec = avroCodecManager.getBeanCodec(EquityMarketPriceEvent.class);
+    avroditeCodec = avroCodecManager.getCodec(EquityMarketPriceEvent.class);
     bufferIn = new AvroInputByteBuffer(data);
   }
 

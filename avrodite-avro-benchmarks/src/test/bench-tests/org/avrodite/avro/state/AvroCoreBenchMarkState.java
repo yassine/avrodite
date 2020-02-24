@@ -55,10 +55,10 @@ public class AvroCoreBenchMarkState {
         .map(Compilation::define)
         .collect(toList())
       ).build();
-    eventSchema = avroCodecManager.<EquityMarketPriceEvent, AvroCodec<EquityMarketPriceEvent>>getBeanCodec(EquityMarketPriceEvent.class).getSchema();
-    metaSchema = avroCodecManager.<EventMeta, AvroCodec<EventMeta>>getBeanCodec(EventMeta.class).getSchema();
-    equitySchema = avroCodecManager.<Equity, AvroCodec<Equity>>getBeanCodec(Equity.class).getSchema();
-    equityOrderSchema = avroCodecManager.<EquityOrder, AvroCodec<EquityOrder>>getBeanCodec(EquityOrder.class).getSchema();
+    eventSchema = avroCodecManager.<EquityMarketPriceEvent, AvroCodec<EquityMarketPriceEvent>>getCodec((Type) EquityMarketPriceEvent.class).getSchema();
+    metaSchema = avroCodecManager.<EventMeta, AvroCodec<EventMeta>>getCodec(EventMeta.class).getSchema();
+    equitySchema = avroCodecManager.<Equity, AvroCodec<Equity>>getCodec(Equity.class).getSchema();
+    equityOrderSchema = avroCodecManager.<EquityOrder, AvroCodec<EquityOrder>>getCodec(EquityOrder.class).getSchema();
 
     equityRecord = new GenericData.Record(requireNonNull(equitySchema));
     eventRecord = new GenericData.Record(requireNonNull(eventSchema));

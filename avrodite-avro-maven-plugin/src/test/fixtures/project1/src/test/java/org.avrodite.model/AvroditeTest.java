@@ -15,7 +15,7 @@ public class AvroditeTest {
     Type type = (Type) avrodite.codecIndex().keySet().stream().findAny().get();
     assertEquals(avrodite.codecIndex().values().size(), 1);
     assertEquals(type.getTypeName(), "org.avrodite.model.TestModel");
-    assertNotNull(avrodite.getBeanCodec(TestModel.class));
+    assertNotNull(avrodite.getCodec(TestModel.class));
   }
 
 }

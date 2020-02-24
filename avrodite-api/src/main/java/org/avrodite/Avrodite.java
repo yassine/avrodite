@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Spliterator;
@@ -44,13 +45,13 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
   @SuppressWarnings("unchecked")
   @Override
-  public <B, U extends Codec<B, ?, ?, S>> U getBeanCodec(Class<B> beanClass) {
+  public <B, U extends Codec<B, ?, ?, S>> U getCodec(Class<B> beanClass) {
     return (U) codecIndex.get(beanClass);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public <B, U extends Codec<B, ?, ?, S>> U getBeanCodec(Type beanType) {
+  public <B, U extends Codec<B, ?, ?, S>> U getCodec(Type beanType) {
     return (U) codecIndex.get(beanType);
   }
 
@@ -93,7 +94,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
     @SuppressWarnings("unchecked")
     private void register(Class<?> clazz, HashMap<Type, C> codecIndex, Avrodite<S, C> avrodite) {
-      ofNullable(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
+      Optional.of(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
         .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
         .map(codec -> codecIndex.computeIfAbsent(getCodecTarget(codec.getClass()), a -> codec))
         .filter(codec -> Configurable.class.isAssignableFrom(clazz))
@@ -110,12 +111,7 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
     @SneakyThrows
     @SuppressWarnings("unchecked")
     private static <S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?, ?, S>> C getBeanCodecInstance(Class<?> beanCodecClass) {
-      try {
-        return (C) beanCodecClass.getConstructor().newInstance();
-      } catch (Exception ex) {
-        log.error(ex.getMessage(), ex);
-        return null;
-      }
+      return (C) beanCodecClass.getConstructor().newInstance();
     }
 
   }
