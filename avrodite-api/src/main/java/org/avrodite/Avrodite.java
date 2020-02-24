@@ -1,7 +1,5 @@
 package org.avrodite;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.lang.reflect.Modifier.isInterface;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -15,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Spliterator;
@@ -24,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.avrodite.api.Codec;
@@ -65,9 +61,9 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
 
     private final S standard;
 
-    private final Set<Class<?>> userCodecs = new HashSet<>();
+    private final Set<C> userCodecs = new HashSet<>();
 
-    public AvroditeBuilder<S, C> include(List<Class<?>> codecs) {
+    public AvroditeBuilder<S, C> include(List<C> codecs) {
       userCodecs.addAll(codecs);
       return this;
     }
@@ -82,36 +78,20 @@ public class Avrodite<S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?,
         .map(codec -> codecIndex.computeIfAbsent(getCodecTarget(codec.getClass()), a -> codec))
         .filter(codec -> Configurable.class.isAssignableFrom(codec.getClass()))
         .forEach(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
-
-      userCodecs.stream()
-        .filter(clazz -> !isAbstract(clazz.getModifiers()))
-        .filter(clazz -> !isInterface(clazz.getModifiers()))
-        .filter(standard.api().typeCodecApi()::isAssignableFrom)
-        .forEach(clazz -> register(clazz, codecIndex, avrodite));
-
+      userCodecs.forEach(codec -> {
+        if(codec instanceof Configurable){
+          ((Configurable)codec).configure(avrodite);
+        }
+        Type t = getCodecTarget(codec.getClass());
+        codecIndex.put(t, codec);
+      });
       return avrodite.codecIndex(unmodifiableMap(codecIndex));
-    }
-
-    @SuppressWarnings("unchecked")
-    private void register(Class<?> clazz, HashMap<Type, C> codecIndex, Avrodite<S, C> avrodite) {
-      Optional.of(AvroditeBuilder.<S, C>getBeanCodecInstance(clazz))
-        .filter(codec -> standard.name().equals(codec.standard().name()) && standard.version().equals(codec.standard().version()))
-        .map(codec -> codecIndex.computeIfAbsent(getCodecTarget(codec.getClass()), a -> codec))
-        .filter(codec -> Configurable.class.isAssignableFrom(clazz))
-        .ifPresent(codec -> ((Configurable<C, ?, ?, S>) codec).configure(avrodite));
     }
 
     private Type getCodecTarget(Class<?> clazz) {
       return ofNullable(resolve(clazz).type(Codec.class).genericTypes())
-        .filter(generics -> !generics.isEmpty())
         .map(generics -> generics.get(0))
         .orElse(Object.class);
-    }
-
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    private static <S extends CodecStandard<?, ?, C, ?>, C extends Codec<?, ?, ?, S>> C getBeanCodecInstance(Class<?> beanCodecClass) {
-      return (C) beanCodecClass.getConstructor().newInstance();
     }
 
   }

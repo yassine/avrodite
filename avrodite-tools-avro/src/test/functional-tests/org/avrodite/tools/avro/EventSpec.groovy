@@ -88,6 +88,7 @@ class EventSpec extends Specification {
           .exclude(Object.class)
           .compile().stream()
           .map({ it.define() })
+          .map({ (AvroCodec<?>) it.newInstance()})
           .collect(Collectors.toList())
       ).build()
     EVENT_SCHEMA = AVRO_CODEC_MANAGER.<EquityMarketPriceEvent, AvroCodec<EquityMarketPriceEvent>>getCodec(EquityMarketPriceEvent.class).getSchema()

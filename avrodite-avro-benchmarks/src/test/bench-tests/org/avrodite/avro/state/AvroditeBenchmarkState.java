@@ -3,6 +3,7 @@ package org.avrodite.avro.state;
 import static java.util.stream.Collectors.toList;
 import static org.avrodite.avro.v1_8.AvroStandardV18.AVRO_1_8;
 
+import com.machinezoo.noexception.Exceptions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import org.avrodite.Avrodite;
@@ -30,6 +31,7 @@ public class AvroditeBenchmarkState {
         .compile()
         .stream()
         .map(Compilation::define)
+        .map(clazz -> Exceptions.sneak().get(() -> (AvroCodec<?>) clazz.newInstance()))
         .collect(toList())
       ).build();
     avroditeCodec = avroCodecManager.getCodec(EquityMarketPriceEvent.class);

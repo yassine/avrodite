@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.avro.AvroFactory;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import com.machinezoo.noexception.Exceptions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -44,6 +45,7 @@ public class JacksonAvroBenchMarkState {
         .compile()
         .stream()
         .map(Compilation::define)
+        .map(clazz -> Exceptions.sneak().get(() -> (AvroCodec<?>) clazz.newInstance()))
         .collect(toList())
       ).build();
     eventSchema = avroCodecManager.<EquityMarketPriceEvent, AvroCodec<EquityMarketPriceEvent>>getCodec(EquityMarketPriceEvent.class).getSchema();

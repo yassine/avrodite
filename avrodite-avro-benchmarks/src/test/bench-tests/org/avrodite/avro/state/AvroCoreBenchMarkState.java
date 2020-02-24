@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.avrodite.avro.v1_8.AvroStandardV18.AVRO_1_8;
 
+import com.machinezoo.noexception.Exceptions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -53,6 +54,7 @@ public class AvroCoreBenchMarkState {
         .compile()
         .stream()
         .map(Compilation::define)
+        .map(clazz -> Exceptions.sneak().get(() -> (AvroCodec<?>) clazz.newInstance()))
         .collect(toList())
       ).build();
     eventSchema = avroCodecManager.<EquityMarketPriceEvent, AvroCodec<EquityMarketPriceEvent>>getCodec((Type) EquityMarketPriceEvent.class).getSchema();
