@@ -1,5 +1,6 @@
 package org.avrodite.tools.avro;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.avrodite.tools.core.utils.CryptoUtils.hashSHA256;
 import static org.avrodite.tools.core.utils.TypeUtils.typeToString;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
@@ -27,59 +29,53 @@ import org.avrodite.tools.template.TypeFingerprint;
 public class SchemaUtils {
 
   public static Map<String, Schema> createSchemaRegistry(BeanManager beanManager) {
-    Map<String, Schema> registry = new HashMap<>();
     SchemaBuilder.TypeBuilder<Schema> schemaBuilder = SchemaBuilder.builder();
-    final Map<String, Boolean> definedTypes = new HashMap<>();
+    SchemaRegistryContext context = new SchemaRegistryContext(schemaBuilder, beanManager);
     beanManager.beans().forEach(beanInfo -> {
       final String schemaName = schemaName(beanInfo.getTargetRaw(), beanInfo.getTarget());
-      if (!definedTypes.containsKey(schemaName)) {
-        registry.put(beanInfo.getSignature(),
-          defineSchema(schemaBuilder, beanManager, beanInfo, definedTypes, registry));
+      if (!context.definedTypes.containsKey(schemaName)) {
+        context.registry.put(beanInfo.getSignature(), defineSchema(beanInfo, context));
       }
     });
-    registry.values().forEach(schema -> log.debug(schema.toString(true)));
-    return unmodifiableMap(registry);
+    context.registry.values().forEach(schema -> log.debug(schema.toString(true)));
+    return unmodifiableMap(context.registry);
   }
 
-  private static Schema defineSchema(SchemaBuilder.TypeBuilder<Schema> schemaBuilder, BeanManager beanManager, BeanInfo beanInfo, final Map<String, Boolean> definedTypes, Map<String, Schema> registry) {
+  private static Schema defineSchema(BeanInfo beanInfo, SchemaRegistryContext context) {
     final String schemaName = schemaName(beanInfo.getTargetRaw(), beanInfo.getTarget());
-    if (definedTypes.containsKey(schemaName)) {
-      return schemaBuilder.type(schemaName);
+    if (context.definedTypes.containsKey(schemaName)) {
+      return context.base.type(schemaName);
     }
-    definedTypes.put(schemaName, true);
-    SchemaBuilder.RecordBuilder<Schema> recordBuilder = schemaBuilder
+    context.definedTypes.put(schemaName, true);
+    SchemaBuilder.RecordBuilder<Schema> recordBuilder = context.base
       .record(schemaName)
       .prop(AvroStandard.JAVA_TYPE_SCHEMA_PROP, beanInfo.getSignature());
     SchemaBuilder.FieldAssembler<Schema> fieldAssembler = recordBuilder.fields();
     beanInfo.getFields()
       .forEach(fieldInfo ->
         fieldAssembler.name(fieldInfo.getName())
-          .type(defineSchema(schemaBuilder, beanInfo, fieldInfo, beanManager, definedTypes, registry))
+          .type(defineSchema(fieldInfo, context))
           .noDefault()
       );
     return fieldAssembler.endRecord();
   }
 
-  static String schemaName(Class<?> rawType, Type type) {
-    return String.join("__", rawType.getName(), hashSHA256(typeToString(type)).substring(0, 8));
-  }
-
-  static Schema defineSchema(final SchemaBuilder.TypeBuilder<Schema> base, final BeanInfo beanInfo, final FieldInfo fieldInfo, final BeanManager beanManager, final Map<String, Boolean> definedTypes, Map<String, Schema> registry) {
+  static Schema defineSchema(final FieldInfo fieldInfo, final SchemaRegistryContext context) {
     final List<TypeFingerprint> fingerprints = new ArrayList<>();
     final List<String> signatures = new ArrayList<>();
     typeTrace(fieldInfo.getType(), fingerprints, signatures);
-    return defineSchema(base, fingerprints, beanInfo, fieldInfo, 0, beanManager, definedTypes, registry);
+    return defineSchema(context, fieldInfo, unmodifiableList(fingerprints), 0);
   }
 
-  static Schema defineSchema(SchemaBuilder.TypeBuilder<Schema> base, List<TypeFingerprint> fingerprints, final BeanInfo beanInfo, FieldInfo fieldInfo, int offset, BeanManager beanManager, Map<String, Boolean> definedTypes, Map<String, Schema> registry) {
+  static Schema defineSchema(final SchemaRegistryContext schemaRegistryContext, final FieldInfo fieldInfo, final List<TypeFingerprint> fingerprints, final int offset) {
     SchemaBuilder.BaseTypeBuilder<Schema> schemaBuilder
-      = (offset == 0 && fieldInfo.isNullable()) ? base.nullable()
-      : base;
+      = (offset == 0 && fieldInfo.isNullable()) ? schemaRegistryContext.base.nullable()
+                                                : schemaRegistryContext.base;
     switch (FieldType.of(fingerprints.get(offset))) {
       case ARRAY:
-        return schemaBuilder.array().items(defineSchema(base, fingerprints, beanInfo, fieldInfo, offset + 1, beanManager, definedTypes, registry));
+        return schemaBuilder.array().items(defineSchema(schemaRegistryContext, fieldInfo, fingerprints, offset + 1));
       case MAP:
-        return schemaBuilder.map().values().type(base.type(defineSchema(base, fingerprints, beanInfo, fieldInfo, offset + 1, beanManager, definedTypes, registry)));
+        return schemaBuilder.map().values().type(schemaRegistryContext.base.type(defineSchema(schemaRegistryContext, fieldInfo, fingerprints, offset + 1)));
       case SHORT:
       case INT:
         return schemaBuilder.intType();
@@ -94,19 +90,19 @@ public class SchemaUtils {
       case STRING:
         return schemaBuilder.stringType();
       default:
-        return beanManager.valueCodecsIndex().keySet().stream()
+        return schemaRegistryContext.beanManager.valueCodecsIndex().keySet().stream()
           .filter(type -> type.isAssignableFrom(fieldInfo.getTargetTypeInfo().rawType()))
-          .map(type -> beanManager.valueCodecsIndex().get(type))
+          .map(type -> schemaRegistryContext.beanManager.valueCodecsIndex().get(type))
           .map(type -> (AvroValueCodec<?>) type)
           .map(AvroValueCodec::schema)
           .findAny()
           .orElseGet(() -> {
             final String schemaName = schemaName(fieldInfo.getTargetTypeInfo().rawType(), fieldInfo.getTargetTypeInfo().type());
-            if (definedTypes.containsKey(schemaName)) {
+            if (schemaRegistryContext.definedTypes.containsKey(schemaName)) {
               return schemaBuilder.type(schemaName);
             } else {
-              Schema schema = defineSchema(base, beanManager, beanManager.beansIndex().get(fieldInfo.getTypeSignature()), definedTypes, registry);
-              registry.put(fieldInfo.getTypeSignature(), schema);
+              Schema schema = defineSchema(schemaRegistryContext.beanManager.beansIndex().get(fieldInfo.getTypeSignature()), schemaRegistryContext);
+              schemaRegistryContext.registry.put(fieldInfo.getTypeSignature(), schema);
               return schema;
             }
           });
@@ -114,4 +110,15 @@ public class SchemaUtils {
 
   }
 
+  static String schemaName(Class<?> rawType, Type type) {
+    return String.join("__", rawType.getName(), hashSHA256(typeToString(type)).substring(0, 8));
+  }
+
+  @RequiredArgsConstructor
+  private static class SchemaRegistryContext {
+    private final SchemaBuilder.TypeBuilder<Schema> base;
+    private final BeanManager beanManager;
+    private final Map<String, Boolean> definedTypes = new HashMap<>();
+    private final Map<String, Schema> registry = new HashMap<>();
+  }
 }
