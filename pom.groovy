@@ -1,116 +1,158 @@
-project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-SNAPSHOT') {
-
+project {
+  groupId 'org.avrodite'
+  artifactId 'avrodite'
+  version '0.2.0-SNAPSHOT'
   modelVersion '4.0.0'
   packaging 'pom'
-  modules {
-    module 'avrodite-api'
-    module 'avrodite-avro'
-    module 'avrodite-avro-benchmarks'
-    module 'avrodite-tools'
-    module 'avrodite-tools-avro'
-    module 'avrodite-avro-maven-plugin'
-    module 'avrodite-pages'
-  }
 
   properties {
     'version.project' '${project.version}'
     'maven.compiler.source' '1.8'
     'maven.compiler.target' '1.8'
     'project.build.sourceEncoding' 'UTF-8'
+    'version.build.compiler' '3.8.1'
     'version.build.jacoco' '0.8.5'
     'version.build.surefire' '3.0.0-M3'
-    'version.build.compiler' '3.8.1'
-    'version.build.gmaven' '1.8.1'
-    'version.logging.jboss' '3.4.1.Final'
-    'version.logging.jboss.ann' '2.2.0.Final'
+    'version.kotlin' '1.3.61'
     'version.logging.logback' '1.2.3'
+    'version.logging.kotlin-logging' '1.7.8'
+    'version.spek' '2.0.9'
     'version.testing.jmh' '1.23'
-    'version.testing.junit' '5.5.2'
-    'version.testing.spock' '2.0-M2-groovy-3.0'
-    'version.utilities.auto.service' '1.0-rc6'
-    'version.utilities.classgraph' '4.8.53'
-    'version.utilities.lombok' '1.18.12'
-    'version.utilities.no-exception' '1.4.4'
-    'version.utilities.vyarus-generics' '3.0.1'
     'java.home' '${env.JAVA_HOME}'
+  }
+
+  modules {
+    module 'avrodite-api'
+    module 'avrodite-avro'
+    module 'avrodite-avro-maven-plugin'
+    module 'avrodite-metadata'
+    module 'avrodite-tools'
+    module 'avrodite-tools-avro'
   }
 
   dependencyManagement {
     dependencies {
-      /* intra modules dependencies */
+      /* intra-module dependecies*/
       dependency('org.avrodite:avrodite-api:${version.project}')
       dependency('org.avrodite:avrodite-avro:${version.project}')
+      dependency('org.avrodite:avrodite-metadata:${version.project}')
       dependency('org.avrodite:avrodite-tools:${version.project}')
       dependency('org.avrodite:avrodite-tools-avro:${version.project}')
-      /* annotation processors */
-      dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
-      dependency('org.projectlombok:lombok:${version.utilities.lombok}:provided')
-      /* java core language utilities */
-      dependency('com.machinezoo.noexception:noexception:${version.utilities.no-exception}') { exclusions('org.slf4j:slf4j-api') }
-      dependency('io.github.classgraph:classgraph:${version.utilities.classgraph}')
-      dependency('ru.vyarus:generics-resolver:${version.utilities.vyarus-generics}')
-      /* logging */
+      /* core dependencies */
+      dependency('io.github.microutils:kotlin-logging:${version.logging.kotlin-logging}')
+      dependency('org.jetbrains.kotlin:kotlin-stdlib:${version.kotlin}')
+      dependency('org.jetbrains.kotlin:kotlin-reflect:${version.kotlin}')
       dependency('ch.qos.logback:logback-classic:${version.logging.logback}')
-      dependency('org.jboss.logging:jboss-logging-annotations:${version.logging.jboss.ann}:provided')
-      dependency('org.jboss.logging:jboss-logging-processor:${version.logging.jboss.ann}:provided')
-      dependency('org.jboss.logging:jboss-logging:${version.logging.jboss}')
       /* testing */
-      dependency('org.junit.jupiter:junit-jupiter:${version.testing.junit}:test')
-      dependency('org.junit.vintage:junit-vintage-engine:${version.testing.junit}:test')
-      dependency('org.hamcrest:hamcrest:2.2:test')
-      dependency('org.assertj:assertj-core:3.15.0:test')
+      dependency('org.spekframework.spek2:spek-dsl-jvm:${version.spek}:test')
+      dependency('org.spekframework.spek2:spek-runner-junit5:${version.spek}:test')
+      dependency("io.strikt:strikt-core:0.23.7:test")
+      /* bench testing */
       dependency('org.openjdk.jmh:jmh-core:${version.testing.jmh}:test')
       dependency('org.openjdk.jmh:jmh-generator-annprocess:${version.testing.jmh}:test')
-      dependency('org.spockframework:spock-core:${version.testing.spock}:test')
     }
   }
 
+  dependencies {
+    dependency('org.jetbrains.kotlin:kotlin-stdlib')
+    dependency('io.github.microutils:kotlin-logging')
+    dependency('ch.qos.logback:logback-classic')
+    /* testing */
+    dependency('org.spekframework.spek2:spek-dsl-jvm:${version.spek}:test')
+    dependency('org.spekframework.spek2:spek-runner-junit5:${version.spek}:test')
+    dependency("io.strikt:strikt-core:0.23.7:test")
+  }
+
   build {
-    plugins {
-      plugin(artifactId: 'maven-compiler-plugin', version: '${version.build.compiler}') {
-        executions {
-          /* compile shared testing fixtures */
-          execution(id: 'default-testCompile', phase: 'test-compile') {
-            configuration {
-              compileSourceRoots('${project.basedir}/src/test/fixtures')
+    pluginManagement {
+      plugins {
+        plugin(artifactId: 'maven-compiler-plugin', version: '${version.build.compiler}') {
+          configuration {
+            compilerArgs {
+              compilerArg '-parameters'
+            }
+          }
+          executions {
+            execution(id: 'default-compile', phase: 'compile')
+            /* compile shared testing fixtures */
+            execution(id: 'default-testCompile', phase: 'test-compile') {
+              configuration {
+                compileSourceRoots('${project.basedir}/src/test/fixtures-java')
+              }
             }
           }
         }
-      }
-      plugin(artifactId: 'maven-surefire-plugin', version: '${version.build.surefire}') {
-        executions {
-          /* disable default surefire execution as the project doesn't use the conventional src/test/java directory */
-          execution(id: 'default-test', phase: 'none')
-        }
-        configuration {
-          includes {}
-          useFile 'false'
-          systemPropertyVariables {
-            'MAVEN_TARGET_DIR' '${project.build.directory}'
+        plugin(groupId: 'org.jetbrains.kotlin', artifactId: 'kotlin-maven-plugin', version: '${version.kotlin}'){
+          executions {
+            execution(id: 'compile.kotlin.src', goals: 'compile', phase: 'compile'){
+              configuration {
+                sourceDirs {
+                  sourceDir '${project.basedir}/src/main/kotlin'
+                }
+                jvmTarget '1.8'
+              }
+            }
+            execution(id: 'compile.kotlin.test.fixtures', goals: 'test-compile', phase: 'test-compile'){
+              configuration {
+                sourceDirs {
+                  sourceDir '${project.basedir}/src/test/fixtures-kotlin'
+                }
+                jvmTarget '1.8'
+              }
+            }
           }
         }
-      }
-      plugin(groupId: 'org.codehaus.gmavenplus', artifactId: 'gmavenplus-plugin', version: '${version.build.gmaven}') {
-        dependencies {
-          dependency('org.codehaus.groovy:groovy-all:3.0.1') { type 'pom' }
+        plugin(artifactId: 'maven-surefire-plugin', version: '${version.build.surefire}') {
+          executions {
+            /* disable default surefire execution as the project doesn't use the conventional src/test/java directory */
+            execution(id: 'default-test', phase: 'none')
+          }
+          configuration {
+            includes {}
+            useFile 'false'
+            /*
+            systemPropertyVariables {
+              'MAVEN_TARGET_DIR' '${project.build.directory}'
+            }
+            */
+          }
         }
       }
     }
   }
 
   profiles {
-    profile(id: 'test.coverage') {
-      activation {
-        property(name: 'test.profile', value: 'ci')
-      }
+    profile(id: 'test.unit') {
+      activation { property(name: 'test.profile', value: 'ci') }
       build {
         plugins {
-          plugin(groupId: 'org.jacoco', artifactId: 'jacoco-maven-plugin', version: '${version.build.jacoco}') {
+          plugin(groupId: 'org.jetbrains.kotlin', artifactId: 'kotlin-maven-plugin', version: '${version.kotlin}'){
             executions {
-              execution(id: 'prepare-agent', phase: 'test-compile', goals: 'prepare-agent') {
+              execution(id: 'compile.kotlin.test.unit', goals: 'test-compile'){
                 configuration {
-                  destFile '${project.parent.basedir}/avrodite-pages/target/jacoco-ut-${project.artifactId}.exec'
-                  propertyName 'surefireArgLine'
+                  sourceDirs {
+                    sourceDir '${project.basedir}/src/test/unit-tests'
+                  }
+                  output '${project.build.directory}/unit-tests-classes'
+                  testOutput '${project.build.directory}/unit-tests-classes'
+                  jvmTarget '1.8'
+                }
+              }
+            }
+          }
+          plugin(artifactId: 'maven-surefire-plugin') {
+            executions {
+              execution(id: 'test.unit', goals: 'test') {
+                configuration {
+                  testSourceDirectory '${project.basedir}/src/test/unit-tests'
+                  testClassesDirectory '${project.build.directory}/unit-tests-classes'
+                  argLine '${surefireArgLine}'
+                  includes {
+                    include '**/*Spec'
+                  }
+                  additionalClasspathElements {
+                    additionalClasspathElement '${project.build.directory}/test-classes'
+                  }
                 }
               }
             }
@@ -119,190 +161,35 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
       }
     }
     profile(id: 'test.functional') {
-      //enables functional testing compilation & execution
-      activation {
-        property(name: 'test.profile', value: 'all')
-        property(name: 'test.profile', value: 'ci')
-      }
+      activation { property(name: 'test.profile', value: 'ci') }
       build {
         plugins {
-          /* compile functional test java code */
-          plugin(artifactId: 'maven-compiler-plugin') {
+          plugin(groupId: 'org.jetbrains.kotlin', artifactId: 'kotlin-maven-plugin', version: '${version.kotlin}'){
             executions {
-              execution(id: 'functional-tests', phase: 'test-compile', goals: 'testCompile') {
+              execution(id: 'compile.kotlin.test.functional', goals: 'test-compile'){
                 configuration {
-                  compileSourceRoots '${project.basedir}/src/test/functional-tests'
-                  outputDirectory '${project.build.directory}/functional-tests-classes'
-                }
-              }
-            }
-          }
-          /* compile functional test groovy code */
-          plugin(groupId: 'org.codehaus.gmavenplus', artifactId: 'gmavenplus-plugin') {
-            executions {
-              execution(id: 'generate-groovy-functional-tests', goals: 'compileTests') {
-                configuration {
-                  testSources {
-                    testSource {
-                      directory '${project.basedir}/src/test/functional-tests'
-                      includes('**/*Spec.groovy')
-                    }
+                  sourceDirs {
+                    sourceDir '${project.basedir}/src/test/functional-tests'
                   }
-                  testOutputDirectory '${project.build.directory}/functional-tests-classes'
+                  output '${project.build.directory}/functional-tests-classes'
+                  testOutput '${project.build.directory}/functional-tests-classes'
+                  jvmTarget '1.8'
                 }
               }
             }
           }
-          /* run compiled functional tests */
           plugin(artifactId: 'maven-surefire-plugin') {
             executions {
-              execution(id: 'functional-tests', goals: 'test') {
+              execution(id: 'test.functional', goals: 'test') {
                 configuration {
-                  includes('**/*Spec')
-                  testClassesDirectory '${project.build.directory}/functional-tests-classes'
                   testSourceDirectory '${project.basedir}/src/test/functional-tests'
-                  argLine '${surefireArgLine}'
-                  additionalClasspathElements {
-                    additionalClasspathElement '${project.build.directory}/test-classes'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    profile(id: 'test.unit') {
-      activation {
-        property(name: 'test.profile', value: 'all')
-        property(name: 'test.profile', value: 'ci')
-      }
-      build {
-        plugins {
-          plugin(groupId: 'org.codehaus.gmavenplus', artifactId: 'gmavenplus-plugin') {
-            executions {
-              execution(id: 'generate-groovy-unit-tests', goals: 'compileTests') {
-                configuration {
-                  testSources {
-                    testSource {
-                      directory '${project.basedir}/src/test/unit-tests'
-                      includes('**/*Test.groovy')
-                    }
-                  }
-                  testOutputDirectory '${project.build.directory}/unit-tests-classes'
-                }
-              }
-            }
-          }
-          plugin(artifactId: 'maven-compiler-plugin') {
-            executions {
-              execution(id: 'unit-tests-compile', phase: 'test-compile', goals: 'testCompile') {
-                configuration {
-                  outputDirectory '${project.build.directory}/unit-tests-classes'
-                  compileSourceRoots '${project.basedir}/src/test/unit-tests'
-                }
-              }
-            }
-          }
-          plugin(artifactId: 'maven-surefire-plugin') {
-            executions {
-              execution(id: 'unit-tests', goals: 'test') {
-                configuration {
-                  testSourceDirectory '${project.basedir}/src/test/unit-tests'
-                  testClassesDirectory '${project.build.directory}/unit-tests-classes'
+                  testClassesDirectory '${project.build.directory}/functional-tests-classes'
                   argLine '${surefireArgLine}'
                   includes {
-                    include '**/*Test'
+                    include '**/*Spec'
                   }
                   additionalClasspathElements {
                     additionalClasspathElement '${project.build.directory}/test-classes'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    profile(id: 'test.bench') {
-      build {
-        plugins {
-          plugin(artifactId: 'maven-compiler-plugin') {
-            executions {
-              execution(id: 'bench-tests-compile', phase: 'test-compile', goals: 'testCompile') {
-                configuration {
-                  outputDirectory '${project.build.directory}/bench-tests-classes'
-                  compileSourceRoots '${project.basedir}/src/test/bench-tests'
-                }
-              }
-            }
-          }
-          plugin(artifactId: 'maven-surefire-plugin') {
-            executions {
-              execution(id: 'bench-tests', goals: 'test') {
-                configuration {
-                  argLine ' '//no coverage to not bias the benchmarking results
-                  testSourceDirectory '${project.basedir}/src/test/bench-tests'
-                  testClassesDirectory '${project.build.directory}/bench-tests-classes'
-                  includes {
-                    include '**/*Benchmark'
-                  }
-                  additionalClasspathElements {
-                    additionalClasspathElement '${project.build.directory}/test-classes'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    profile(id: 'java.tools') {
-      activation {
-        file(exists: '${java.home}/lib/tools.jar')
-      }
-      dependencies {
-        dependency('com.sun:tools:${maven.compiler.source}:system') { systemPath '${java.home}/lib/tools.jar' }
-      }
-    }
-    profile(id: 'ci.sonar') {
-      activation {
-        property(name: 'test.profile', value: 'ci')
-      }
-      build {
-        plugins {
-          //load sonar ci config
-          plugin(groupId: 'org.codehaus.mojo', artifactId: 'properties-maven-plugin', version: '1.0.0') {
-            executions {
-              execution(id: 'sonar-read-properties-ci', phase: 'initialize', goals: 'read-project-properties') {
-                inherited false
-                configuration {
-                  quiet 'false'
-                  files {
-                    file '${project.basedir}/sonar-ci.properties'
-                  }
-                }
-              }
-            }
-          }
-          plugin(groupId: 'org.codehaus.mojo', artifactId: 'sonar-maven-plugin', version: '3.7.0.1746'){
-
-          }
-        }
-      }
-    }
-    profile(id: 'dev.local') {
-      build {
-        plugins {
-          //load local sonar config overrides
-          plugin(groupId: 'org.codehaus.mojo', artifactId: 'properties-maven-plugin', version: '1.0.0') {
-            executions {
-              execution(id: 'sonar-read-properties-local-dev', phase: 'initialize', goals: 'read-project-properties') {
-                inherited false
-                configuration {
-                  quiet 'false'
-                  files {
-                    file '${project.basedir}/sonar-dev.properties'
                   }
                 }
               }
@@ -313,4 +200,10 @@ project(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-
     }
   }
 
+  repositories {
+    repository {
+      id 'jcenter'
+      url 'https://jcenter.bintray.com'
+    }
+  }
 }

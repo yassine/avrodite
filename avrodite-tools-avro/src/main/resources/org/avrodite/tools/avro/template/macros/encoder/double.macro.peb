@@ -1,3 +1,0 @@
-{% macro encode_double(templateContext, field, depth, reference) %}
-buffer.writeDouble({{ reference }});
-{% endmacro %}

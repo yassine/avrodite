@@ -1,20 +1,12 @@
 <configuration>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <withJansi>true</withJansi>
     <encoder>
-      <pattern>%green([%date]) %highlight([%level]) [%t] %cyan([%C:%L]) %msg%n</pattern>
+      <pattern>%date %highlight(%-5level) %magenta([%-4.30thread]) %cyan(%logger{30}:%-3line) - %msg%n</pattern>
     </encoder>
   </appender>
-  <logger name="com.mitchellbosecke.pebble.loader.ClasspathLoader" level="INFO" />
-  <logger name="org.jboss.logging.LoggerProviders" level="INFO" />
-  <logger name="io.favro.core.compiler" level="INFO" />
-  <logger name="org.sonatype.maven.polyglot.groovy.builder.ModelBuilder" level="INFO" />
-  <logger name="org.eclipse.sisu.inject" level="INFO" />
-
-
+  <logger name="org.avrodite" level="DEBUG" />
   <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
-<!--
-http://logback.qos.ch/manual/layouts.html#conversionWord
--->

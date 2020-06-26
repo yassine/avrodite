@@ -1,20 +1,26 @@
-project(artifactId: 'avrodite-tools-avro', version: '0.1.0-SNAPSHOT') {
-  modelVersion '4.0.0'
-  parent(groupId: 'org.avrodite', artifactId: 'avrodite-parent', version: '0.1.0-SNAPSHOT', relativePath: '../pom.groovy')
+project {
 
+  parent(groupId: 'org.avrodite', artifactId: 'avrodite', version: '0.2.0-SNAPSHOT', relativePath: '../pom.groovy')
+  artifactId 'avrodite-tools-avro'
+  modelVersion '4.0.0'
   dependencies {
-    dependency('org.avrodite:avrodite-avro')
-    dependency('org.avrodite:avrodite-tools')
-    dependency('com.google.auto.service:auto-service:1.0-rc6:provided')
-    dependency('org.apache.avro:avro:1.9.1') { exclusions('org.slf4j:slf4j-api') }
-    /* utilities */
-    dependency('org.projectlombok:lombok')
-    /* logging */
-    dependency('ch.qos.logback:logback-classic')
-    /* testing */
-    dependency('org.junit.jupiter:junit-jupiter')
-    dependency('org.junit.vintage:junit-vintage-engine')
-    dependency('org.spockframework:spock-core')
+    dependency 'org.avrodite:avrodite-api'
+    dependency 'org.avrodite:avrodite-avro'
+    dependency 'org.avrodite:avrodite-tools'
+    dependency 'org.avrodite:avrodite-metadata'
+    dependency('com.google.guava:guava:28.2-jre')
+    dependency('org.apache.maven:maven-core:3.6.3'){ exclusions('org.slf4j:slf4j-api', 'com.google.guava:guava') }
+    dependency('org.apache.maven:maven-plugin-api:3.6.3'){ exclusions('org.slf4j:slf4j-api', 'com.google.guava:guava') }
+    dependency('org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.0:provided')
+    dependency 'org.openjdk.jmh:jmh-core'
+    dependency 'org.openjdk.jmh:jmh-generator-annprocess'
+  }
+
+  build {
+    plugins {
+      plugin(groupId: 'org.jetbrains.kotlin', artifactId: 'kotlin-maven-plugin')
+      plugin(artifactId: 'maven-compiler-plugin')
+    }
   }
 
 }

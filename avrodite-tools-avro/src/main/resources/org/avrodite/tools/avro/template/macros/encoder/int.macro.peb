@@ -1,3 +1,0 @@
-{% macro encode_int(templateContext, field, depth, reference) %}
-buffer.writeInt({{ reference }});
-{% endmacro %}

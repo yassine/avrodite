@@ -1,7 +1,0 @@
-{% macro encode_boolean(templateContext, field, depth, reference) %}
-if({{ reference }}){
-    buffer.writeByte(1);
-}else{
-    buffer.writeByte(0);
-}
-{% endmacro %}
