@@ -21,7 +21,9 @@ object TypeUtils {
   fun <T : Any> findMainConstructor(metaScope: MetaScope, type: KType, clazz: KClass<T>): KFunction<T>?
     = clazz.memberProperties
         .filter { it !is KMutableProperty<*> }
-        .fold(hashMapOf<String, KType>()) { map, prop -> map.apply { this[prop.name] = GenericsContext.of(type).resolveProp(prop)!! } }
+        .fold(hashMapOf<String, KType>()) { map, prop -> map.apply {
+          this[prop.name] = GenericsContext.of(type).resolveProp(prop)!!
+        } }
         .let { map ->
           findMatchingAllNamesAndTypes(metaScope, map, type)
             ?: findMatchingMaxNamesAndTypes(metaScope, map, type)

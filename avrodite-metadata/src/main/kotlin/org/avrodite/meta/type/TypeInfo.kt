@@ -42,6 +42,10 @@ class TypeInfo(val type: KType, val metaScope: MetaScope? = null) {
       type.isMarkedNullable.takeIf { it }?.let { type.withNullability(false) }
                 ?: type, metaScope = metaScope)
 
+  /*
+    This is being used by codecs sources, it is tied Kotlin for now
+    TODO extract this to support other target languages signatures (core java)
+   */
   fun signature(): String
     = when (category) {
         TypeCategory.MAP -> "kotlin.collections.Map<kotlin.String, ${composite!!.signature()}>"
@@ -55,7 +59,6 @@ class TypeInfo(val type: KType, val metaScope: MetaScope? = null) {
 
   fun simpleName() : String
     = (type.classifier as KClass<*>).simpleName!!
-
 
   fun packageName()
     = ((type.classifier as KClass<*>).qualifiedName!!).split(".")

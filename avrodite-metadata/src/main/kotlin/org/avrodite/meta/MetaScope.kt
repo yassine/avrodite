@@ -1,6 +1,5 @@
 package org.avrodite.meta
 
-import org.avrodite.meta.type.TypeCategory
 import org.avrodite.meta.type.TypeCategory.*
 import org.avrodite.meta.type.TypeCategory.Companion.typeCategoryOf
 import org.avrodite.meta.type.TypeInfo
@@ -29,7 +28,7 @@ class MetaScope(private val config: MetaScopeConfig) {
     = config.excludedClasses.all { it != clazz }
         && (
           // ok if it's not a type (primitive, data-struture etc.)
-          typeCategoryOf(this, clazz) != TypeCategory.TYPE
+          typeCategoryOf(this, clazz) != TYPE
             || (
             // ok if it's a value type
             isValueType(clazz)
@@ -54,8 +53,8 @@ class MetaScope(private val config: MetaScopeConfig) {
       private val packages = mutableSetOf<String>()
       private var valueTypePredicate: (KClass<*>) -> Boolean = { _ -> false }
 
-      fun addPackages(vararg pkg: String): Builder = apply { packages.addAll(pkg) }
-      fun excludedClasses(vararg types: KClass<*>): Builder = apply { excludedClasses.addAll(types) }
+      fun exclude(vararg types: KClass<*>): Builder = apply { excludedClasses.addAll(types) }
+      fun include(vararg pkg: String): Builder = apply { packages.addAll(pkg) }
       fun include(pkg: String): Builder = apply { packages.add(pkg) }
       fun valueTypePredicate(predicate: (KClass<*>) -> Boolean) = also { valueTypePredicate = predicate }
 

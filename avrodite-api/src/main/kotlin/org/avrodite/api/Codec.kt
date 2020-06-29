@@ -32,5 +32,3 @@ interface FormatApi<in I : Any, in O : Any, out C : Any, out V : Any> {
   fun output() : KClass<in O>
   fun value()  : KClass<out V>
 }
-
-;

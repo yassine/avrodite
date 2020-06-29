@@ -18,7 +18,7 @@ object MetaManagerSpec : Spek({
     val classes = MetaManager.of {
       scope {
         include(ValidModelG::class.java.`package`.name)
-        excludedClasses(InPackageExcludedClass::class)
+        exclude(InPackageExcludedClass::class)
         valueTypePredicate { it == ValueTypeModel::class }
       }
       targets {

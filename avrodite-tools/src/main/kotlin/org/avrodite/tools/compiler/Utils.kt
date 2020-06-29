@@ -5,13 +5,16 @@ import java.lang.reflect.Method
 object Utils {
 
   private const val DEFINE_CLASS_METHOD_NAME: String = "defineClass"
+  private const val DEFINE_CLASS_METHOD_ARG_COUNT = 4
 
   fun defineClass(classLoader: ClassLoader, fqName: String, byteCode: ByteArray): Class<*>?
     = declaredMethods(classLoader.javaClass)
-        .firstOrNull { method -> method.name == DEFINE_CLASS_METHOD_NAME && method.parameters.size == 4 }
+        .firstOrNull {
+          method -> method.name == DEFINE_CLASS_METHOD_NAME && method.parameters.size == DEFINE_CLASS_METHOD_ARG_COUNT
+        }
         ?.let {
           it.isAccessible = true
-          it.invoke(Thread.currentThread().contextClassLoader, fqName, byteCode, 0, byteCode.size) as Class<*>?
+          it.invoke(classLoader, fqName, byteCode, 0, byteCode.size) as Class<*>?
         }
 
   fun declaredMethods(clazz: Class<*>): List<Method> {

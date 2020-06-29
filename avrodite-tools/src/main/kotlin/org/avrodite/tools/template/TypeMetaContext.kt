@@ -28,8 +28,6 @@ class TypeMetaContext(val typeMeta: TypeMeta) {
 
 open class MemberMetaContext(val typeMeta: TypeMetaContext, val memberMeta: MemberMeta) {
 
-  val memberMetaContext: TypeInfoContext = TypeInfoContext(memberMeta.typeInfo)
-
   fun targetType():TypeInfo
     = extractTargetType(memberMeta.typeInfo)
 

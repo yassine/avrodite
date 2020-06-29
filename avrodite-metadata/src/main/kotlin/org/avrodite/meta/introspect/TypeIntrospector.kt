@@ -1,13 +1,10 @@
 package org.avrodite.meta.introspect
 
-import org.avrodite.meta.type.TypeUtils
 import kotlin.reflect.*
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 
 class TypeIntrospector(val type: KType, val rawType: KClass<*>) {
-
-  constructor(rawType: KClass<*>) : this(TypeUtils.createType(rawType), rawType)
 
   private val getterPrefix = "get"
   private val setterPrefix = "set"
@@ -22,7 +19,7 @@ class TypeIntrospector(val type: KType, val rawType: KClass<*>) {
     props.filter { it.prop.getter.visibility == KVisibility.PUBLIC }
       .filter { it.prop.returnType.classifier is KClass<*> }
       .forEach {
-        PropIntrospectInfo(it.prop.name, it.prop, it.prop.returnType, it.prop.returnType.classifier as KClass<*>, it.owner, it.ownerType, it.prop is KMutableProperty)
+        PropIntrospectInfo(it.prop.name, it.prop, it.prop.returnType, it.owner, it.ownerType, it.prop is KMutableProperty)
           .apply {
             propIntrospectIndex[name] = this
           }
@@ -37,7 +34,7 @@ class TypeIntrospector(val type: KType, val rawType: KClass<*>) {
           ?.takeIf { it.returnType.classifier is KClass<*> }
           ?.also { getter ->
             propsIndex[entry.key]?.let {
-              PropIntrospectInfo(it.prop.name, it.prop, getter.returnType, getter.returnType.classifier as KClass<*>, it.owner, it.ownerType, setterMap.containsKey(it.prop.name))
+              PropIntrospectInfo(it.prop.name, it.prop, getter.returnType, it.owner, it.ownerType, setterMap.containsKey(it.prop.name))
             }?.apply { propIntrospectIndex[name] = this }
           }
       }

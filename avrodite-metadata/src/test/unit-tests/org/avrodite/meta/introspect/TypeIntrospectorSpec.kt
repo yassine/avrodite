@@ -8,11 +8,13 @@ import org.spekframework.spek2.style.specification.describe
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import kotlin.reflect.full.withNullability
+import kotlin.reflect.typeOf
 
+@ExperimentalStdlibApi
 object TypeIntrospectorSpec : Spek({
 
   describe("kotlin: classes introspection") {
-    val introspector = TypeIntrospector(KFixtureEvent::class)
+    val introspector = TypeIntrospector(typeOf<KFixtureEvent>(), KFixtureEvent::class)
     val props = introspector.findProps()
 
     it("should include props from supertypes"){
@@ -27,7 +29,7 @@ object TypeIntrospectorSpec : Spek({
   }
 
   describe("java: classes introspection") {
-    val introspector = TypeIntrospector(FixtureEvent::class)
+    val introspector = TypeIntrospector(typeOf<KFixtureEvent>(), FixtureEvent::class)
     val props = introspector.findProps()
 
     it("should include props from supertypes"){

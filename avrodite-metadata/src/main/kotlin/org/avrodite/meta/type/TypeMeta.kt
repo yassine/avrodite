@@ -8,15 +8,14 @@ import org.avrodite.meta.type.TypeUtils.findMainConstructor
 import org.avrodite.meta.type.TypeUtils.propsOfInterest
 import java.util.UUID.randomUUID
 import kotlin.reflect.*
-import kotlin.reflect.jvm.javaType
 
 open class MemberMeta(val typeInfo: TypeInfo, val name: String)
 
 class ParamMeta(typeInfo: TypeInfo, val parameter: KParameter)
   : MemberMeta(typeInfo, parameter.name ?: "unknown"+ randomUUID())
+
 class PropMeta(typeInfo: TypeInfo, val field: KProperty<*>, val getter: KFunction<*>?, val setter: KFunction<*>?)
-  : MemberMeta(typeInfo, field.name)
-{
+  : MemberMeta(typeInfo, field.name){
 
   fun target() : TypeInfo
     = recursiveTarget(typeInfo)
@@ -44,7 +43,9 @@ class TypeMeta(val type: KType, val scope: MetaScope) {
     props = propsOfInterest(rawType, type, scope).asSequence()
       .filter { prop -> constructorParams.map { it.name }.all { prop.name != it } }
       .filter { it.writable }
-      .map { PropMeta(TypeInfo(it.type, scope), it.prop, findGetter(it.rawType, it.prop), findSetter(it.rawType, it.prop)) }
+      .map {
+        PropMeta(TypeInfo(it.type, scope), it.prop, findGetter(it.rawType, it.prop), findSetter(it.rawType, it.prop))
+      }
       .toList()
   }
 

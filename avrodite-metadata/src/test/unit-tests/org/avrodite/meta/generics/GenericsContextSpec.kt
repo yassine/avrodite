@@ -26,7 +26,7 @@ class GenericsContextSpec: Spek({
     }
 
     it("it should resolve properties generics specialization") {
-      expectThat(GenericsContext.of(typeOf<FixtureDao>()).resolveProp(MyDao::class.memberProperties.first { it.name == "prop" }).let { it.toString() })
+      expectThat(GenericsContext.of(typeOf<FixtureDao>()).resolveProp(MyDao::class.memberProperties.first { it.name == "prop" }).toString())
         .isEqualTo("kotlin.Double?")
     }
 

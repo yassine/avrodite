@@ -17,8 +17,9 @@ class TypeDiscoverer(val scope: MetaScope) {
   }
 
   private fun discoverTypes(typeMeta: TypeMeta, map: MutableMap<String, TypeMeta?>) {
-    ( typeMeta.props.map { it.typeInfo } + typeMeta.constructorParams.map { it.typeInfo } )
+    ( typeMeta.props + typeMeta.constructorParams )
         .asSequence()
+        .map { it.typeInfo }
         .map { extractTargetType(it).eraseNullability() }
         .filter { it.category == TypeCategory.TYPE }
         .filter { !map.containsKey(it.signature()) }

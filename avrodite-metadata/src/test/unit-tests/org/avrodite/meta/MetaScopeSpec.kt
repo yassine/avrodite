@@ -15,7 +15,7 @@ object MetaScopeSpec : Spek({
 
   val scope = of {
     include("org.avrodite.meta.scope.include")
-    excludedClasses(InPackageExcludedClass::class)
+    exclude(InPackageExcludedClass::class)
     valueTypePredicate { it == ValueTypeModel::class }
   }
 

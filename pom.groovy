@@ -110,11 +110,6 @@ project {
           configuration {
             includes {}
             useFile 'false'
-            /*
-            systemPropertyVariables {
-              'MAVEN_TARGET_DIR' '${project.build.directory}'
-            }
-            */
           }
         }
       }
