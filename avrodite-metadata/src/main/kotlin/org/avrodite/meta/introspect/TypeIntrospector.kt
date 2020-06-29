@@ -48,7 +48,7 @@ class TypeIntrospector(val type: KType, val rawType: KClass<*>) {
       .filter { it.parameters.size == 1 }
       .filter { it.name.startsWith(getterPrefix, true) }
       .filter { propsIndex.containsKey(extractPropName(it)) }
-      .fold(hashMapOf(), { map, current -> map.also { map[extractPropName(current)] = current } })
+      .associateBy { extractPropName(it) }
   }
 
   private fun setterMap(propsIndex: HashMap<String, PropContext>): Map<String, KFunction<*>> {
@@ -57,7 +57,7 @@ class TypeIntrospector(val type: KType, val rawType: KClass<*>) {
       .filter { it.parameters.size == 2 }
       .filter { it.name.startsWith(setterPrefix, true) }
       .filter { propsIndex.containsKey(extractPropName(it)) }
-      .fold(hashMapOf(), { map, current -> map.also { map[extractPropName(current)] = current } })
+      .associateBy { extractPropName(it) }
   }
 
 }
