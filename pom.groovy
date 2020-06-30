@@ -25,7 +25,7 @@ project {
     module 'avrodite-api'
     module 'avrodite-avro'
     module 'avrodite-avro-maven-plugin'
-    module 'avrodite-metadata'
+    module 'avrodite-metamodel'
     module 'avrodite-tools'
     module 'avrodite-tools-avro'
   }
