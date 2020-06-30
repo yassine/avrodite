@@ -3,16 +3,16 @@ package org.avrodite.meta
 import org.avrodite.meta.type.TypeCategory.*
 import org.avrodite.meta.type.TypeCategory.Companion.typeCategoryOf
 import org.avrodite.meta.type.TypeInfo
-import org.avrodite.meta.type.TypeUtils
 import org.avrodite.meta.type.TypeUtils.findMainConstructor
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
 class MetaScope(private val config: MetaScopeConfig) {
 
   fun isValueType(clazz: KClass<*>): Boolean = config.valueTypePredicate(clazz)
 
-  fun isTypeOfInterest(clazz: KClass<*>): Boolean = isTypeOfInterest(TypeInfo(TypeUtils.createType(clazz)))
+  fun isTypeOfInterest(clazz: KClass<*>): Boolean = isTypeOfInterest(TypeInfo(clazz.createType()))
 
   fun isTypeOfInterest(typeInfo: TypeInfo): Boolean = when (typeInfo.category) {
     VALUE, STRING, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN

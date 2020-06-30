@@ -21,9 +21,7 @@ object TypeUtils {
   fun <T : Any> findMainConstructor(metaScope: MetaScope, type: KType, clazz: KClass<T>): KFunction<T>?
     = clazz.memberProperties
         .filter { it !is KMutableProperty<*> }
-        .fold(hashMapOf<String, KType>()) { map, prop -> map.apply {
-          this[prop.name] = GenericsContext.of(type).resolveProp(prop)!!
-        } }
+        .associateBy ({ it.name }, { GenericsContext.of(type).resolveProp(it)!! })
         .let { map ->
           findMatchingAllNamesAndTypes(metaScope, map, type)
             ?: findMatchingMaxNamesAndTypes(metaScope, map, type)
@@ -46,28 +44,11 @@ object TypeUtils {
         type.isMarkedNullable.takeIf { it }?.let { "${sig}?" } ?: sig
       } ?: type.toString()
 
-  fun createType(clazz: KClass<*>): KType = KTypeSupport(clazz)
-
   fun extractKClass(type: KType) : KClass<*>
     = type.classifier
     ?.takeIf { it is KClass<*> } ?.let { it as KClass<*> }
     ?: extractKClass( (type.classifier as KTypeParameter).upperBounds[0] )
 
-}
-
-internal class KTypeSupport(private val clazz: KClass<*>) : KType {
-  override val annotations: List<Annotation>
-    get() = clazz.annotations
-  override val arguments: List<KTypeProjection>
-    get() = clazz.typeParameters.map { parameter ->
-      KTypeProjection(parameter.variance, parameter.upperBounds.takeIf { it.isNotEmpty() }?.let { it[0] })
-    }
-  override val classifier: KClassifier?
-    get() = clazz
-  override val isMarkedNullable: Boolean
-    get() = false
-  override fun toString(): String
-    = clazz.qualifiedName!!
 }
 
 private fun <T : Any> findMatchingAllNamesAndTypes(metaScope: MetaScope, index: Map<String, KType>,

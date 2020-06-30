@@ -3,11 +3,11 @@ package org.avrodite.meta.type
 import org.avrodite.meta.MetaScope
 import org.avrodite.meta.introspect.Utils.findGetter
 import org.avrodite.meta.introspect.Utils.findSetter
-import org.avrodite.meta.type.TypeUtils.createType
 import org.avrodite.meta.type.TypeUtils.findMainConstructor
 import org.avrodite.meta.type.TypeUtils.propsOfInterest
 import java.util.UUID.randomUUID
 import kotlin.reflect.*
+import kotlin.reflect.full.createType
 
 open class MemberMeta(val typeInfo: TypeInfo, val name: String)
 
@@ -29,7 +29,7 @@ class PropMeta(typeInfo: TypeInfo, val field: KProperty<*>, val getter: KFunctio
 
 class TypeMeta(val type: KType, val scope: MetaScope) {
 
-  constructor(clazz: KClass<*>, metaScope: MetaScope) : this(createType(clazz), metaScope)
+  constructor(clazz: KClass<*>, metaScope: MetaScope) : this(clazz.createType(), metaScope)
 
   val constructorParams: List<ParamMeta>
   val props: List<PropMeta>
