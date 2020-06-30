@@ -7,6 +7,7 @@ package ${meta.type.namespace()}
 import org.apache.avro.Schema
 import org.avrodite.avro.*
 import org.avrodite.avro.error.*
+import kotlin.reflect.typeOf
 
 class <@codec_name type=meta.type.info context=meta/> : AvroCodec<${meta.typeMeta.typeInfo.signature()}>{
 
@@ -61,6 +62,11 @@ class <@codec_name type=meta.type.info context=meta/> : AvroCodec<${meta.typeMet
     </#list>
     return model
   }
+
+  override fun format() : AvroFormat = AvroFormat
+
+  @ExperimentalStdlibApi
+  override fun target() = typeOf<${meta.typeMeta.typeInfo.getType()}>()
 
   companion object {
 

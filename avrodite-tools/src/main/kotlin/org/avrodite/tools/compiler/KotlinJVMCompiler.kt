@@ -3,6 +3,7 @@ package org.avrodite.tools.compiler
 
 import io.github.classgraph.ClassGraph
 import mu.KotlinLogging.logger
+import org.avrodite.api.Codec
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -11,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import java.io.File
-import java.io.FileOutputStream
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Files.find
@@ -20,9 +20,7 @@ import java.util.function.BiPredicate
 import java.util.stream.Collectors.toList
 import kotlin.Int.Companion.MAX_VALUE
 
-
 class KotlinJVMCompiler internal constructor(private val arguments: K2JVMCompilerArguments) : Compiler<FSCompilationResult> {
-
 
   override fun compile(source: List<SourceContext>): FSCompilationResult {
     synchronized(arguments) {
@@ -43,7 +41,7 @@ class KotlinJVMCompiler internal constructor(private val arguments: K2JVMCompile
 
       val result = K2JVMCompiler().exec(PrivateCollector(), Services.EMPTY, arguments)
       if (result == ExitCode.OK) {
-        val metaInfFile = File(outputDir, "META-INF/services/org.avrodite.api.Codec")
+        val metaInfFile = File(outputDir, "META-INF/services/${Codec::class.qualifiedName}")
         metaInfFile.parentFile.mkdirs()
         if (!metaInfFile.canRead()) {
           metaInfFile.createNewFile()
@@ -52,7 +50,10 @@ class KotlinJVMCompiler internal constructor(private val arguments: K2JVMCompile
         val sourceIndex: Map<String, SourceContext> = source.associateBy { it.fqName }
         val outputIndex: Map<String, ByteArray> = find(outputDir.toPath(), MAX_VALUE, BiPredicate { _, fileAttributes -> !fileAttributes.isDirectory })
           .filter { f -> source.map { it.fqName.replace(".", File.separator) }.any {
-              ( f.toFile().absolutePath.endsWith("${it}.class") || f.toFile().absolutePath.endsWith("${it}Kt.class") )
+              ( f.toFile().absolutePath.endsWith("${it}\$Companion.class")
+                || f.toFile().absolutePath.endsWith("${it}.class")
+                || f.toFile().absolutePath.endsWith("${it}Kt.class")
+              )
             }
           }.collect(toList())
           .map { it.toFile() }
@@ -61,9 +62,13 @@ class KotlinJVMCompiler internal constructor(private val arguments: K2JVMCompile
             val sourceContext: SourceContext = sourceIndex[sourceKey]
               ?: error("couldn't find source for key $sourceKey")
             val bytes = Files.readAllBytes(f.toPath()) ?: error("couldn't read file ${f.absolutePath}")
-            lines.add(sourceContext.fqName)
-            sourceContext.fqName to bytes
+            f.absolutePath.takeIf { !it.contains("\$Companion") }
+              ?.let { sourceContext.fqName to bytes }
+              ?: "${sourceContext.fqName}\$Companion" to bytes
+
           }.associateBy({ it.first }, { it.second })
+
+        outputIndex.keys.filter { !it.endsWith("\$Companion") }.forEach{ lines.add(it) }
 
         lines.toSet().joinToString("\n").also {
           metaInfFile.writeText(it, Charsets.UTF_8)
@@ -94,7 +99,7 @@ class KotlinJVMCompiler internal constructor(private val arguments: K2JVMCompile
 
     fun of(init: Builder.() -> Unit): KotlinJVMCompiler = Builder().also(init).build()
 
-    class Builder constructor() {
+    class Builder {
 
       private val classPathItems = hashSetOf<String>()
       private val arguments = K2JVMCompilerArguments()

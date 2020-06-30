@@ -2,6 +2,7 @@ package org.avrodite.api
 
 import org.avrodite.error.AvroditeException
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 interface Input
 interface Output
@@ -13,6 +14,8 @@ interface Codec<M : Any, in I:Input, in O:Output, out F:Format<I, O, Codec<*, I,
   fun decode(m : M, input: I): M
   @Throws(AvroditeException::class)
   fun decode(input: I): M
+  fun format(): F
+  fun target(): KType
 }
 
 interface ValueCodec<V : Any, in I: Input, in O: Output, out F: Format<I, O, C, ValueCodec<*, I, O, F, C>>, out C: Codec<*, I, O, F, ValueCodec<*, I, O, F, C>>> {

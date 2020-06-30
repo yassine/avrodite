@@ -43,13 +43,16 @@ object AvroditeToolsAvro {
     fun compiler(receiver: KotlinJVMCompiler.Companion.Builder.() -> Unit) = also { receiver(compilerBuilder) }
 
     fun build() : FSCompilationResult {
-      //scan for value codecs
+      // scan for value codecs
       val valueCodecIndex = createValueCodecRegistry(loaders)
       val valuesTypes = valueCodecIndex.keys
+      // build the meta manager
       val metaManager = metaManagerBuilder.scope {
         valueTypePredicate { type -> valuesTypes.any { it == type.java.name } }
       }.create()
+      // create the schema registry
       val schemaIndex = createSchemaRegistry(metaManager, valueCodecIndex)
+      // generate the codecs sources
       val sourceContexts = metaManager.index()
         .map { (_, v) -> TypeMetaContext(v) }
         .map { it ->
@@ -61,7 +64,7 @@ object AvroditeToolsAvro {
             withContextVar("valueCodecs", valueCodecIndex.entries.map { it.key to it.value::class.java.name }.associateBy({it.first}) {it.second})
           }.render().replace("\n+","\n")
         }.map { (typeMetaContext, source) -> SourceContext(codecFqName(typeMetaContext.type.info), source) }
-
+      // dispatch the sources to the kotlin compiler
       return compilerBuilder.build().compile(sourceContexts)
     }
 
