@@ -50,8 +50,3 @@ open class MyDao<D : Number>(val d: D) : ReadDao<D>, WriteDao<D> {
   }
 
 }
-
-interface FixtureContract
-interface ChildFixtureContract : FixtureContract
-
-class Fixture<A : ChildFixtureContract, B>(val a: A, val b: B)

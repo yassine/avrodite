@@ -27,17 +27,13 @@ class MetaScope(private val config: MetaScopeConfig) {
       //ok if it's not excluded specifically (exclusions always take highest precedence)
     = config.excludedClasses.all { it != clazz }
         && (
-          // ok if it's not a type (primitive, data-struture etc.)
+          // ok if it's not a type (primitive, data-structure, value types etc.)
           typeCategoryOf(this, clazz) != TYPE
             || (
-            // ok if it's a value type
-            isValueType(clazz)
-              || (
-                // ok if it's within a package under the scope (and)
-                config.packages.filter { clazz.qualifiedName?.startsWith(it) ?: false }.any()
-                // (and) is constructible using types within the scope
-                && findMainConstructor(this, type, clazz) != null
-              )
+              // ok if it's within a package under the scope (and)
+              config.packages.filter { clazz.qualifiedName?.startsWith(it) ?: false }.any()
+              // (and) is constructible using types within the scope
+              && findMainConstructor(this, type, clazz) != null
             )
         )
 
